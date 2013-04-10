@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Reflix.Models.TitleViewModel>
+@using Reflix.Helpers
+@{
+    ViewBag.Title = "Reflix - Home Page";
+}
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>@ViewBag.Title.</h1><br />
+                <h2>@ViewBag.Message</h2>
+            </hgroup>
+            <p>
+                @Html.ActionLink("Previous Week", "Index", new { startDate = ((DateTime)ViewBag.StartDate).AddDays(-7).ToString("yyyy-MM-dd") })
+                @Html.ActionLink("Current Week", "Index", "Home")
+                @Html.ActionLink("Next Week", "Index", new { startDate = ((DateTime)ViewBag.StartDate).AddDays(7).ToString("yyyy-MM-dd") })
+            </p>
+        </div>
+    </section>
+}
+@section scripts {
+<script type="text/javascript">
+    $('input[name=dataSourceFilter]').click(function () {
+        if (this.value == "Both") {
+            $("._datasource:contains('RSS')").parents("ol li").show();
+            $("._datasource:contains('OData')").parents("ol li").show();
+        }
+        else if (this.value == "RSS") {
+            $("._datasource:contains('RSS')").parents("ol li").show();
+            $("._datasource:contains('OData')").parents("ol li").hide();
+        }
+        else {
+            $("._datasource:contains('RSS')").parents("ol li").hide();
+            $("._datasource:contains('OData')").parents("ol li").show();
+        }
+    });
+</script>
+
+}
+<h3>Releasing this week:</h3>
+<ul class="datasource-list">
+    <li style="font-weight: bold; vertical-align: central;">Show:</li>
+    <li><input type="radio" name="dataSourceFilter" value="RSS" /> RSS</li>
+    <li><input type="radio" name="dataSourceFilter" value="OData" /> OData</li>
+    <li><input type="radio" name="dataSourceFilter" value="Both" checked="checked" /> Both</li>
+</ul>
+<br style="clear:both;" />
+<ol class="round">
+    @foreach(var m in Model)
+    {
+        // Skip all entries where the URL is null, can't link to Netflix anyway
+        if (m.Title.Url == null)
+        {
+            continue;
+        }
+    <li>
+        <img style="float: left; margin-top: 12px;" src="@m.Title.BoxArt.LargeUrl" alt="@m.Title.Name" />
+        <ul style="list-style: none; margin-left: 50px;">
+            <li><h2>@m.Title.Name</h2></li>
+            <li><span style="margin-right: 0.8em;">@m.Title.ReleaseYear</span><span style="border: 1px white solid; background: #5f5f5f; padding: 0 0.5em; color: white; margin-right: 0.8em;">@m.Title.Rating</span><span class="duration">@(m.Title.Runtime / 60) minutes</span><span class="_datasource" style="border: 1px white solid; background: #5f5f5f; padding: 0 0.5em; color: white; margin-left: 0.8em;">@(m.IsRss ? "RSS" : "OData")</span></li>
+            <li>
+                <table>
+                    <tr>
+                        <td style="font-weight: bold; text-align: right;">Cast:</td>
+                        <td>@foreach (var actor in m.Title.Cast)
+                      {
+                          <a href="@string.Format("http://dvd.netflix.com/RoleDisplay/{0}/{1}?lnkce=mdp-cast", actor.Name.Replace(" ", "_"), actor.Id)">@actor.Name</a>
+                      }</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; text-align: right;">Director:</td>
+                        <td>@foreach (var director in m.Title.Directors)
+                      {
+                          <a href="@string.Format("http://dvd.netflix.com/RoleDisplay/{0}/{1}?lnkce=mdp-cast", director.Name.Replace(" ", "_"), director.Id)">@director.Name</a>
+                      }</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; text-align: right;">Genre:</td>
+                        <td>@foreach (var genre in m.Title.Genres)
+                      {
+                          @(genre.Name + ", ")
+                      }</td>
+                    </tr>
+                </table>
+            </li>
+            <li style="margin: 18px 0 12px 0;">@m.Title.Synopsis.RemoveMarkup()</li>
+            <li><a href="@m.Title.Url.Replace("www.", "dvd.")" target="_blank">Open in Netflix…</a></li>
+        </ul>
+    </li>
+    }
+</ol>
