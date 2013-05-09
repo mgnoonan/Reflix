@@ -40,6 +40,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Edm, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -155,6 +158,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\Utility.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Models\TitleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -221,6 +225,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="css\metro-bootstrap.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt" />
@@ -231,6 +236,19 @@
     <None Include="Properties\PublishProfiles\reflix - Web Deploy.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.0.intellisense.js" />
+    <Content Include="Images\rss_icon.gif" />
+    <Content Include="js\bootstrap-alert.js" />
+    <Content Include="js\bootstrap-button.js" />
+    <Content Include="js\bootstrap-carousel.js" />
+    <Content Include="js\bootstrap-collapse.js" />
+    <Content Include="js\bootstrap-dropdown.js" />
+    <Content Include="js\bootstrap-modal.js" />
+    <Content Include="js\bootstrap-popover.js" />
+    <Content Include="js\bootstrap-scrollspy.js" />
+    <Content Include="js\bootstrap-tab.js" />
+    <Content Include="js\bootstrap-tooltip.js" />
+    <Content Include="js\bootstrap-transition.js" />
+    <Content Include="js\bootstrap-typeahead.js" />
     <Content Include="Scripts\jquery-1.8.0.js" />
     <Content Include="Scripts\jquery-1.8.0.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.23.js" />
@@ -291,9 +309,10 @@
     <Content Include="Service References\Netflix\service.edmx" />
     <Content Include="Views\Shared\_LayoutSO.cshtml" />
     <Content Include="Views\Home\IndexSO.cshtml" />
+    <Content Include="Views\Shared\_LayoutMetroBS.cshtml" />
+    <Content Include="Views\Home\IndexMBS.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Filters\" />
     <Folder Include="Models\Mapping\" />
   </ItemGroup>

@@ -1,10 +1,16 @@
 ﻿@model IEnumerable<Reflix.Models.Post>
 @{
     ViewBag.Title = "About";
+    Layout = "~/Views/Shared/_LayoutMetroBS.cshtml";
 }
 
 <hgroup class="title">
     <h1>@ViewBag.Title.</h1>
     <h2>@ViewBag.Message</h2>
+    <ul>
+        <li><img src="~/Images/rss_icon.gif" alt="RSS" /> <a href="http://rss.netflix.com/NewReleasesRSS">Netflix New Releases</a></li>
+        <li><img src="~/Images/rss_icon.gif" alt="RSS" /> <a href="http://www.blockbuster.com/rss/newRelease">Blockbuster New Releases</a></li>
+        <li><img src="~/Images/rss_icon.gif" alt="RSS" /> <a href="http://www.movies.com/rss-feeds/new-on-dvd-rss">Movies.com New Releases</a></li>
+    </ul>
 </hgroup>
 

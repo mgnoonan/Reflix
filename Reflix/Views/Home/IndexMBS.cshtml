@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Reflix.Models.TitleViewModel>
+@using Reflix.Helpers
+@{
+    ViewBag.Title = "Reflix - Home Page";
+    Layout = "~/Views/Shared/_LayoutMetroBS.cshtml";
+}
+
+<div class="page-header">
+    <h1>Releasing this week <small>on Netflix DVD</small></h1>
+</div>
+<div class="subnav">
+    <ul class="nav nav-pills">
+        <li>@Html.ActionLink("Previous Week", "Index", new { startDate = ((DateTime)ViewBag.StartDate).AddDays(-7).ToString("yyyy-MM-dd") })</li>
+        <li>@Html.ActionLink("Next Week", "Index", new { startDate = ((DateTime)ViewBag.StartDate).AddDays(7).ToString("yyyy-MM-dd") })</li>
+    </ul>
+</div>
+@foreach(var m in Model)
+{
+    // Skip all entries where the URL is null, can't link to Netflix anyway
+    if (m.Title.Url == null)
+    {
+        continue;
+    }
+    <div class="row">
+        <div class="span2">
+            <img src="@m.Title.BoxArt.LargeUrl" alt="@m.Title.Name" style="margin-top:15px;" />
+        </div>
+        <div class="span10">
+            <h2>@m.Title.Name</h2>
+            <div class="row">
+                <div class="span10">
+                <span style="padding: 5px 10px 5px 10px;">@m.Title.ReleaseYear</span>
+                <span class="label label-inverse">@m.Title.Rating</span>
+                <span style="padding: 5px 10px 5px 10px;">@m.Title.Runtime minutes</span>
+                @*<span class="label label-inverse">@(m.IsRss ? "RSS" : "OData")</span>*@
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <td style="width: 100px; text-align: right;"><strong>Cast:</strong></td>
+                    <td>@foreach (var actor in m.Title.Cast)
+                    {
+                        <a href="@string.Format("http://dvd.netflix.com/RoleDisplay/{0}/{1}", actor.Name.Replace(" ", "_"), actor.Id)">@actor.Name</a><span>,</span>
+                    }</td>
+                </tr>
+                <tr>
+                    <td style="width: 100px; text-align: right;"><strong>Director:</strong></td>
+                    <td>@foreach (var director in m.Title.Directors)
+                    {
+                        <a href="@string.Format("http://dvd.netflix.com/RoleDisplay/{0}/{1}", director.Name.Replace(" ", "_"), director.Id)">@director.Name</a>
+                    }</td>
+                </tr>
+                <tr>
+                    <td style="width: 100px; text-align: right;"><strong>Genre:</strong></td>
+                    <td>@foreach (var genre in m.Title.Genres)
+                    {
+                        @(genre.Name + ", ")
+                    }</td>
+                </tr>
+            </table>
+            <div class="row">
+                <div class="span10">
+                    <blockquote>@m.Title.Synopsis.RemoveMarkup()</blockquote>
+                </div>
+            </div>
+            <a class="btn btn-primary" href="@m.Title.Url.Replace("www.", "dvd.")" target="_blank">Open in Netflix</a>
+            <div class="page-header"></div>
+        </div>
+    </div>
+}

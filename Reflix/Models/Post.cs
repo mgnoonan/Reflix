@@ -39,17 +39,23 @@ namespace Reflix.Models
             Creator = GetElementValue(post, "creator");
             Content = GetElementValue(post, "encoded");
 
+            if (string.IsNullOrWhiteSpace(Url))
+                Url = Link;
+
             string fullDescription = GetElementValue(post, "description");
             Description = fullDescription.Substring(fullDescription.LastIndexOf(">") + 1);
 
             int start = fullDescription.LastIndexOf("http://");
             int end = fullDescription.LastIndexOf("\"/>");
             int len = end - start;
-            string imageUrl = fullDescription.Substring(start, len);
-            //string imageFile = imageUrl.Substring(imageUrl.LastIndexOf("/"));
-            //string lastFour = imageFile.Substring(imageFile.Length - 8, 4);
+            if (len > 0)
+            {
+                string imageUrl = fullDescription.Substring(start, len);
+                //string imageFile = imageUrl.Substring(imageUrl.LastIndexOf("/"));
+                //string lastFour = imageFile.Substring(imageFile.Length - 8, 4);
 
-            ImageUrl = imageUrl.Replace("/small/", "/large/");
+                ImageUrl = imageUrl.Replace("/small/", "/large/");
+            }
 
             // The Date property is a nullable DateTime? -- if the pubDate element
             // can't be parsed into a valid date, the Date property is set to null
