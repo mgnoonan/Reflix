@@ -29,8 +29,15 @@ namespace Reflix
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
+try {
             _store = new EmbeddableDocumentStore { DataDirectory = "~/App_Data" };
             _store.Initialize();
+}
+catch (Exception ex) {
+    System.Diagnostics.Trace.TraceError(ex.Message);
+    Thread.Sleep(new TimeSpan(0, 0, 2));
+            _store.Initialize();
+}
 
             //IndexCreation.CreateIndexes(Assembly.GetCallingAssembly(), Store);
         }
