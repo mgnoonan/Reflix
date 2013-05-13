@@ -29,19 +29,36 @@ namespace Reflix
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
+            int maxErrorCount = 3;
+            while (maxErrorCount-- > 0)
+            {
+                if (InitializeRavenDB("~/App_Data", maxErrorCount > 0))
+                {
+                    break;
+                }
+
+                System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
+            }
+
+            //IndexCreation.CreateIndexes(Assembly.GetCallingAssembly(), Store);
+        }
+
+        private static bool InitializeRavenDB(string dataDirectory, bool rethrowException)
+        {
             try
             {
-                _store = new EmbeddableDocumentStore { DataDirectory = "~/App_Data" };
+                _store = new EmbeddableDocumentStore { DataDirectory = dataDirectory };
                 _store.Initialize();
+                return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.TraceError(ex.Message);
-                System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
-                _store.Initialize();
-            }
+                if (rethrowException)
+                    throw;
 
-            //IndexCreation.CreateIndexes(Assembly.GetCallingAssembly(), Store);
+                return false;
+            }
         }
     }
 }
