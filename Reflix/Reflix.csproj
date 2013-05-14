@@ -159,8 +159,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BaseRavenApiController.cs" />
     <Compile Include="Controllers\BaseRavenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TitleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -176,6 +178,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\logs\RVN.log" />
+    <Content Include="App_Data\logs\RVNtmp.log" />
+    <Content Include="App_Data\raven-data.ico" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\SiteSO.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -238,6 +243,11 @@
     <Content Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt" />
     <Content Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <Content Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
+    <Content Include="App_Data\Data" />
+    <Content Include="App_Data\IndexDefinitions\Temp%252fTitleViewModels%252fByRssDate.index" />
+    <Content Include="App_Data\logs\RVNres00001.jrs" />
+    <Content Include="App_Data\logs\RVNres00002.jrs" />
+    <Content Include="App_Data\system\RVN.chk" />
     <None Include="Properties\PublishProfiles\NCI-PRIME.pubxml" />
     <None Include="Properties\PublishProfiles\reflix - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\reflix - Web Deploy.pubxml" />
@@ -320,6 +330,9 @@
     <Content Include="Views\Home\IndexMBS.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\IndexDefinitions\TemporaryIndexDefinitionsAsSource\" />
+    <Folder Include="App_Data\Indexes\" />
+    <Folder Include="App_Data\temp\" />
     <Folder Include="Filters\" />
     <Folder Include="Models\Mapping\" />
   </ItemGroup>
