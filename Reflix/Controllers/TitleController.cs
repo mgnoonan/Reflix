@@ -29,19 +29,37 @@ namespace Reflix.Controllers
             return query.SingleOrDefault();
         }
 
-        //// POST api/title
-        //public void Post([FromBody]string value)
-        //{
-        //}
+        // POST api/title
+        public HttpResponseMessage Post(TitleViewModel value)
+        {
+            if (this.ModelState.IsValid)
+            {
+                this.RavenSession.Store(value);
+                var response = Request.CreateResponse<TitleViewModel>(HttpStatusCode.Created, value);
+                response.Headers.Location = GetTitleLocation(value.Title.Id);
+                return response;
+            }
 
-        //// PUT api/title/5
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
+            return Request.CreateResponse(HttpStatusCode.BadRequest);
+        }
 
-        //// DELETE api/title/5
-        //public void Delete(int id)
-        //{
-        //}
+        // PUT api/title/5
+        public void Put(int id, [FromBody]TitleViewModel value)
+        {
+            throw new NotImplementedException();
+        }
+
+        // DELETE api/title/5
+        public void Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Uri GetTitleLocation(string id)
+        {
+            var controller = this.Request.GetRouteData().Values["controller"];
+            return new Uri(this.Url.Link("DefaultApi", new { controller = controller, id = id }));
+        }
+
     }
 }

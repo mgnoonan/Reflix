@@ -22,20 +22,21 @@ namespace Reflix.Controllers
         {
             try
             {
-                DateTime newStartDate;
+                DateTime calculatedStartDate;
                 if (!startDate.HasValue)
-                    newStartDate = CalculateStartDate();
+                    calculatedStartDate = CalculateStartDate();
                 else
-                    newStartDate = startDate.Value.Date;
+                    calculatedStartDate = startDate.Value.Date;
 
-                var endDate = newStartDate.AddDays(6);
+                var calculatedEndDate = calculatedStartDate.AddDays(6);
 
-                var modelList = GetODataTitles(newStartDate, endDate);
-                AddRssTitles(modelList, newStartDate);
+                //var modelList = GetODataTitles(newStartDate, endDate);
+                //AddRssTitles(modelList, newStartDate);
+                var modelList = GetRssTitlesFromEmbeddedStore(calculatedStartDate, calculatedEndDate);
 
-                ViewBag.Message = string.Format("DVD releases for the week of {0} through {1}.", newStartDate.ToString("MMMM d, yyyy"), endDate.ToString("MMMM d, yyyy")); ;
-                ViewBag.StartDate = newStartDate;
-                ViewBag.EndDate = endDate;
+                ViewBag.Message = string.Format("Week of {0}", calculatedStartDate.ToString("d-MMM-yyyy"));
+                ViewBag.StartDate = calculatedStartDate;
+                ViewBag.EndDate = calculatedEndDate;
 
                 return View("IndexMBS", modelList.OrderBy(t => t.Title.Name).ToList());
             }
@@ -44,34 +45,6 @@ namespace Reflix.Controllers
                 System.Diagnostics.Trace.TraceError(ex.Message);
                 throw;
             }
-        }
-
-        private static List<TitleViewModel> GetODataTitles(DateTime newStartDate, DateTime endDate)
-        {
-            //try
-            //{
-            //    _serviceDown = false;
-
-            //    var ctx = new Netflix.NetflixCatalog(new Uri("http://odata.netflix.com/Catalog/"));
-            //    var query = from m in ctx.Titles.Expand("Dvd").Expand("Genres").Expand("Cast").Expand("Directors")
-            //                where m.Dvd.AvailableFrom >= newStartDate && m.Dvd.AvailableFrom <= endDate
-            //                orderby m.Name
-            //                select m;
-
-            //    var list = query.ToList();
-            //    var modelList = list.Select(l => new TitleViewModel
-            //    {
-            //        Title = l,
-            //        IsRss = false
-            //    }).ToList();
-
-            //    return modelList;
-            //}
-            //catch
-            //{
-            //_serviceDown = true;
-            return new List<TitleViewModel>();
-            //}
         }
 
         private DateTime CalculateStartDate()
@@ -93,15 +66,15 @@ namespace Reflix.Controllers
 
         private void AddRssTitles(List<TitleViewModel> originalTitles, DateTime newStartDate)
         {
-            if (AddRssTitlesFromEmbeddedStore(originalTitles, newStartDate))
-            {
-                return;
-            }
+            //if (GetRssTitlesFromEmbeddedStore(originalTitles, newStartDate))
+            //{
+            //    return;
+            //}
 
-            if (newStartDate != CalculateStartDate())
-            {
-                return;
-            }
+            //if (newStartDate != CalculateStartDate())
+            //{
+            //    return;
+            //}
 
             GetRssTitles(originalTitles, "http://rss.netflix.com/NewReleasesRSS", newStartDate);
             //GetRssTitles(originalTitles, "http://www.movies.com/rss-feeds/new-on-dvd-rss", newStartDate);
@@ -264,21 +237,13 @@ namespace Reflix.Controllers
             return title;
         }
 
-        private bool AddRssTitlesFromEmbeddedStore(List<TitleViewModel> originalTitles, DateTime newStartDate)
+        private List<TitleViewModel> GetRssTitlesFromEmbeddedStore(DateTime newStartDate, DateTime newEndDate)
         {
-            bool result = false;
-
             var query = from title in this.RavenSession.Query<TitleViewModel>()
-                        where title.RssDate == newStartDate
+                        where title.RssDate >= newStartDate && title.RssDate <= newEndDate
                         select title;
 
-            if (query.Any())
-            {
-                originalTitles.AddRange(query);
-                result = true;
-            }
-
-            return result;
+            return query.ToList();
         }
 
         public ActionResult Contact()
