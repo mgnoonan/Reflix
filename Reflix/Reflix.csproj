@@ -168,14 +168,7 @@
     </Compile>
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\Utility.cs" />
-    <Compile Include="Models\Post.cs" />
-    <Compile Include="Models\TitleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\Netflix\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.datasvcmap</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />
@@ -271,10 +264,6 @@
     <Content Include="Scripts\knockout-2.1.0.debug.js" />
     <Content Include="Scripts\knockout-2.1.0.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
-    <Content Include="Service References\Netflix\Reference.datasvcmap">
-      <Generator>DataServicesCoreClientGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -315,7 +304,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Service References\Netflix\service.edmx" />
     <Content Include="Views\Shared\_LayoutSO.cshtml" />
     <Content Include="Views\Home\IndexSO.cshtml" />
     <Content Include="Views\Shared\_LayoutMetroBS.cshtml" />
@@ -323,21 +311,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filters\" />
-    <Folder Include="Models\Mapping\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ServiceReferenceMetadataStorage Include="Service References\Netflix\">
-      <Type>datasvcmap</Type>
-    </ServiceReferenceMetadataStorage>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reflix.Models\Reflix.Models.csproj">
+      <Project>{391c8c93-0b06-43cc-9ddd-8927772957d1}</Project>
+      <Name>Reflix.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

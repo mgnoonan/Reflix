@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>MarkupSanitizer</id>
+    <version>1.0.0.1</version>
+    <title>MarkupSanitizer</title>
+    <authors>Tatham Oddie</authors>
+    <owners>Tatham Oddie</owners>
+    <licenseUrl>http://markupsanitizer.codeplex.com/license</licenseUrl>
+    <projectUrl>http://markupsanitizer.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Takes untrusted (X)HTML and massages it into real, trusted XHTML. While plenty of effort goes into preserving the original intent, markup validity and safety is the first priority. It's particularly useful with content management systems where users are in control of markup, but you want to target XHTML1.1.</description>
+    <summary>Takes untrusted (X)HTML and massages it into real, trusted XHTML. While plenty of effort goes into preserving the original intent, markup validity and safety is the first priority. It's particularly useful with content management systems where users are in control of markup, but you want to target XHTML1.1.</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>html xhtml markup xss security</tags>
+  </metadata>
+</package>

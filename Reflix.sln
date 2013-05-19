@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix", "Reflix\Reflix.csproj", "{54F0966D-F431-4F55-9153-8406E01CE362}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Worker", "Reflix.Worker\Reflix.Worker.csproj", "{CC36482C-91D1-4515-B3A7-85E7CE5EB356}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Models", "Reflix.Models\Reflix.Models.csproj", "{391C8C93-0B06-43CC-9DDD-8927772957D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +17,14 @@ Global
 		{54F0966D-F431-4F55-9153-8406E01CE362}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54F0966D-F431-4F55-9153-8406E01CE362}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54F0966D-F431-4F55-9153-8406E01CE362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC36482C-91D1-4515-B3A7-85E7CE5EB356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC36482C-91D1-4515-B3A7-85E7CE5EB356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC36482C-91D1-4515-B3A7-85E7CE5EB356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC36482C-91D1-4515-B3A7-85E7CE5EB356}.Release|Any CPU.Build.0 = Release|Any CPU
+		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

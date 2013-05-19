@@ -30,13 +30,13 @@ namespace Reflix.Controllers
         }
 
         // POST api/title
-        public HttpResponseMessage Post(TitleViewModel value)
+        public HttpResponseMessage Post(TitleViewModel title)
         {
             if (this.ModelState.IsValid)
             {
-                this.RavenSession.Store(value);
-                var response = Request.CreateResponse<TitleViewModel>(HttpStatusCode.Created, value);
-                response.Headers.Location = GetTitleLocation(value.Title.Id);
+                this.RavenSession.Store(title);
+                var response = Request.CreateResponse<TitleViewModel>(HttpStatusCode.Created, title);
+                response.Headers.Location = GetTitleLocation(title.Title.Id);
                 return response;
             }
 
@@ -44,13 +44,13 @@ namespace Reflix.Controllers
         }
 
         // PUT api/title/5
-        public void Put(int id, [FromBody]TitleViewModel value)
+        public void Put(string id, TitleViewModel value)
         {
             throw new NotImplementedException();
         }
 
         // DELETE api/title/5
-        public void Delete(int id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
