@@ -10,6 +10,6 @@ namespace Reflix.Worker.CustomSiteParsers
     interface ICustomSiteParser
     {
         List<TitleViewModel> ParseRssList();
-        Title ParseRssItem(Title title);
+        MovieTitle ParseRssItem(MovieTitle title);
     }
 }

@@ -7,7 +7,7 @@ namespace Reflix.Models
 {
     public class TitleViewModel
     {
-        public TitleViewModel(Title title, bool isRss, DateTime rssDate)
+        public TitleViewModel(MovieTitle title, bool isRss, DateTime rssDate)
         {
             this.Title = title;
             this.IsRss = isRss;
@@ -19,7 +19,7 @@ namespace Reflix.Models
             // TODO: Complete member initialization
         }
 
-        public Title Title { get; set; }
+        public MovieTitle Title { get; set; }
         public bool IsRss { get; set; }
         public DateTime RssDate { get; set; }
     }

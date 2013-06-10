@@ -29,6 +29,17 @@ namespace Reflix.Controllers
             return query.SingleOrDefault();
         }
 
+        // GET api/title/getbytargetdate
+        [ActionName("GetByTargetDate")]
+        public IEnumerable<TitleViewModel> GetByTargetDate(DateTime targetDate)
+        {
+            var query = from title in this.RavenSession.Query<TitleViewModel>()
+                        where title.RssDate == targetDate
+                        select title;
+
+            return query.AsEnumerable();
+        }
+
         // POST api/title
         public HttpResponseMessage Post(TitleViewModel title)
         {

@@ -33,22 +33,22 @@ namespace Reflix.Worker.CustomSiteParsers
             {
                 if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
                 {
-                    var feedTitle = new Title
+                    var feedTitle = new MovieTitle
                     {
                         Id = post.Guid.Substring(post.Guid.LastIndexOf('/') + 1),
                         Name = post.Title,
                         Url = post.Url,
                         Synopsis = post.Description,
-                        Cast = new Collection<Person>(),
-                        Directors = new Collection<Person>(),
-                        Genres = new Collection<Genre>(),
-                        BoxArt = new BoxArt { LargeUrl = post.ImageUrl },
+                        Cast = new List<MoviePerson>(),
+                        Directors = new List<MoviePerson>(),
+                        Genres = new List<string>(),
+                        BoxArt = post.ImageUrl,
                         ReleaseYear = DateTime.Now.Year,
                         Rating = "N/A",
                         Runtime = 0
                     };
 
-                    Title netflixTitle = null;
+                    MovieTitle netflixTitle = null;
                     netflixTitle = ParseRssItem(feedTitle);
 
                     if (netflixTitle == null)
@@ -67,7 +67,7 @@ namespace Reflix.Worker.CustomSiteParsers
             return originalTitles;
         }
 
-        public Title ParseRssItem(Title title)
+        public MovieTitle ParseRssItem(MovieTitle title)
         {
             return base.ParseNetflixTitle(title);
         }

@@ -20,7 +20,7 @@ namespace Reflix.Worker.CustomSiteParsers
             _startDate = startDate;
         }
 
-        public Title ParseNetflixTitle(Title title)
+        public MovieTitle ParseNetflixTitle(MovieTitle title)
         {
             string html = Utils.GetHttpWebResponse(title.Url, null, new System.Net.CookieContainer());
             var document = new HtmlDocument();
@@ -41,7 +41,7 @@ namespace Reflix.Worker.CustomSiteParsers
                 {
                     string parsedID = node.Attributes["href"].Value;
                     parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                    title.Cast.Add(new Person { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim() });
+                    title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim() });
                 }
             }
             catch { }
@@ -54,7 +54,7 @@ namespace Reflix.Worker.CustomSiteParsers
                 {
                     string parsedID = node.Attributes["href"].Value;
                     parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                    title.Directors.Add(new Person { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim() });
+                    title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim() });
                 }
             }
             catch { }
@@ -65,7 +65,7 @@ namespace Reflix.Worker.CustomSiteParsers
                 nodes = document.DocumentNode.SelectNodes("//*[@id='support']/div[3]");
                 foreach (var node in nodes)
                 {
-                    title.Genres.Add(new Genre { Name = node.InnerText.Replace("Genre:", string.Empty).Trim() });
+                    title.Genres.Add(node.InnerText.Replace("Genre:", string.Empty).Trim());
                 }
             }
             catch { }

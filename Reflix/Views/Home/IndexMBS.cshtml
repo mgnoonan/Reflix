@@ -26,7 +26,7 @@
     }
     <div class="row">
         <div class="span2">
-            <img src="@m.Title.BoxArt.LargeUrl" alt="@m.Title.Name" style="margin-top:15px;" />
+            <img src="@m.Title.BoxArt" alt="@m.Title.Name" style="margin-top:15px;" />
         </div>
         <div class="span10">
             <h2>@m.Title.Name</h2>
@@ -57,7 +57,7 @@
                     <td style="width: 100px; text-align: right;"><strong>Genre:</strong></td>
                     <td>@foreach (var genre in m.Title.Genres)
                     {
-                        @(genre.Name + ", ")
+                        @(genre + ", ")
                     }</td>
                 </tr>
             </table>

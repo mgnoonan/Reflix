@@ -29,12 +29,12 @@ namespace Reflix.Worker
                 logfile.ConsoleOutput = true;
                 logfile.WriteLine("RSSFeed starting");
 
-                DateTime startDate = DateTime.Now.Date;
+                DateTime targetDate = DateTime.Now.Date;
                 var parsers = new List<ICustomSiteParser>();
-                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", startDate));
-                //parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", startDate));
+                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate));
+                parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate));
 
-                AddNewTitles(parsers);
+                AddNewTitles(targetDate, parsers);
 
                 //var oldTitles = GetExistingTitles();
                 //foreach (var title in oldTitles)
@@ -71,8 +71,10 @@ namespace Reflix.Worker
             Console.WriteLine();
         }
 
-        private static void AddNewTitles(List<ICustomSiteParser> parsers)
+        private static void AddNewTitles(DateTime targetDate, List<ICustomSiteParser> parsers)
         {
+            var existingTitles = GetExistingTitles(targetDate);
+
             var newTitles = new List<TitleViewModel>();
             foreach (var parser in parsers)
             {
@@ -82,24 +84,29 @@ namespace Reflix.Worker
 
             foreach (var title in newTitles)
             {
+                if (existingTitles.Any(e => e.Title.Id == title.Title.Id))
+                    continue;
+
                 var client = new RestClient("http://localhost:4204/api");
                 var request = new RestRequest("Title", Method.POST);
                 request.RequestFormat = DataFormat.Json;
-                request.AddParameter("title", title);
+                request.AddBody(title);
                 //var response = client.Execute<TitleViewModel>(request);
                 var response = client.Post<TitleViewModel>(request);
 
-                if (!string.IsNullOrWhiteSpace(response.ErrorMessage))
+                if (response.StatusCode != HttpStatusCode.Created)
                 {
-                    throw response.ErrorException;
+                    throw new Exception(string.Format("Error {0}", response.StatusCode));
                 }
             }
         }
 
-        private static List<TitleViewModel> GetExistingTitles()
+        private static List<TitleViewModel> GetExistingTitles(DateTime targetDate)
         {
             var client = new RestClient("http://localhost:4204/api");
-            var request = new RestRequest("Title", Method.GET);
+            var request = new RestRequest("Title/GetByTargetDate", Method.GET);
+            request.AddParameter("targetDate", targetDate.ToString("yyyy-MM-dd"));
+
             var response = client.Execute(request);
             string responseString = response.Content;
             var oldTitles = JsonConvert.DeserializeObject<List<TitleViewModel>>(responseString);
