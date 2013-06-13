@@ -13,11 +13,13 @@ namespace Reflix.Worker.CustomSiteParsers
     {
         protected string _url;
         protected DateTime _startDate;
+        protected string _name;
 
-        public BaseSiteParser(string url, DateTime startDate)
+        public BaseSiteParser(string url, DateTime startDate, string name)
         {
             _url = url;
             _startDate = startDate;
+            _name = name;
         }
 
         public MovieTitle ParseNetflixTitle(MovieTitle title)
@@ -29,9 +31,13 @@ namespace Reflix.Worker.CustomSiteParsers
             //*[@id="nmmdp"]/table/tr/td/div/div[1]/span
             var nodes = document.DocumentNode.SelectNodes("//*[@id='nmmdp']/table/tr/td/div/div[1]/span");
             title.ReleaseYear = Convert.ToInt32(nodes[0].InnerText);
-            title.Rating = nodes[1].InnerText;
-            string runtime = nodes[2].InnerText;
-            title.Runtime = Convert.ToInt32(runtime.Substring(0, runtime.IndexOf(' ')).Trim());
+            title.Rating = nodes[1] == null ? "N/A" : nodes[1].InnerText;
+
+            if (nodes.Count >= 3)
+            {
+                string runtime = nodes[2] == null ? "0 " : nodes[2].InnerText;
+                title.Runtime = Convert.ToInt32(runtime.Substring(0, runtime.IndexOf(' ')).Trim());
+            }
 
             try
             {

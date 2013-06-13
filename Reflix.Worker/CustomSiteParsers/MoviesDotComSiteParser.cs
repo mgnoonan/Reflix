@@ -13,7 +13,9 @@ namespace Reflix.Worker.CustomSiteParsers
 {
     class MoviesDotComSiteParser : BaseSiteParser, ICustomSiteParser
     {
-        public MoviesDotComSiteParser(string url, DateTime startDate) : base(url, startDate) { }
+        public MoviesDotComSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
+
+        public string Name { get { return base._name; } }
 
         public List<TitleViewModel> ParseRssList()
         {
@@ -74,18 +76,20 @@ namespace Reflix.Worker.CustomSiteParsers
             document.LoadHtml(html);
 
             //*[@id="AddQueueWatchIt"]
-            var node = document.DocumentNode.SelectSingleNode("//*[@id='AddQueueWatchIt']");
-            string href = node.Attributes["onclick"].Value;
+            var nodes = document.DocumentNode.SelectNodes("//*[@id='AddQueueWatchIt']");
+            string href = nodes[1].Attributes["onclick"].Value;
             string[] attributes = href.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             foreach (var attribute in attributes)
             {
-                if (attribute.Contains("addToQueue"))
-                {
-                    int startIndex = href.LastIndexOf("/");
-                    int endIndex = href.LastIndexOf(")", startIndex);
-                    int len = endIndex - startIndex;
-                    title.Url = string.Format("http://dvd.netflix.com/Movie/{0}/{1}", title.Name.Replace(" ", "_"), attribute.Substring(startIndex, len));
-                }
+                if (!attribute.Contains("addToQueue"))
+                    continue;
+
+                int startIndex = attribute.LastIndexOf("/") + 1;
+                int endIndex = attribute.IndexOf("'", startIndex);
+                int len = endIndex - startIndex;
+                string netflixId = attribute.Substring(startIndex, len);
+                title.Id = netflixId;
+                title.Url = string.Format("http://dvd.netflix.com/Movie/{0}/{1}", title.Name.Replace(" ", "_"), netflixId);
             }
 
             return base.ParseNetflixTitle(title);

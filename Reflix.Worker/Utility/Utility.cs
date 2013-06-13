@@ -178,5 +178,15 @@ namespace Reflix.Worker.Utility
                 }
             }
         }
+
+        public static DateTime CalculateStartDate()
+        {
+            DateTime testDate = DateTime.Now.Date;
+
+            //if (testDate.Day == (int)DayOfWeek.Sunday)
+            //    return testDate;
+
+            return testDate.AddDays(-(int)testDate.DayOfWeek);
+        }
     }
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace NCI.Utility
 {
-    public class Utils
+    internal class Utils
     {
-        internal static string GetHttpWebResponse(string url, string postData = null, CookieContainer cookieContainer = null)
+        public static string GetHttpWebResponse(string url, string postData = null, CookieContainer cookieContainer = null)
         {
             ServicePointManager.Expect100Continue = false;
 
@@ -74,6 +74,16 @@ namespace NCI.Utility
                 sb.AppendFormat("{0:x2}", output[i]);
 
             return sb.ToString();
+        }
+
+        public static DateTime CalculateStartDate()
+        {
+            DateTime testDate = DateTime.Now.Date;
+
+            //if (testDate.Day == (int)DayOfWeek.Sunday)
+            //    return testDate;
+
+            return testDate.AddDays(-(int)testDate.DayOfWeek);
         }
     }
 }

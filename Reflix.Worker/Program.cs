@@ -29,18 +29,12 @@ namespace Reflix.Worker
                 logfile.ConsoleOutput = true;
                 logfile.WriteLine("RSSFeed starting");
 
-                DateTime targetDate = DateTime.Now.Date;
+                DateTime targetDate = Utils.CalculateStartDate();
                 var parsers = new List<ICustomSiteParser>();
-                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate));
-                parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate));
+                //parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
+                parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate, "Movies.com"));
 
                 AddNewTitles(targetDate, parsers);
-
-                //var oldTitles = GetExistingTitles();
-                //foreach (var title in oldTitles)
-                //{
-                //    Console.WriteLine("Item: {0}", title.Title.Url);
-                //}
             }
             //catch (DbEntityValidationException dbEx)
             //{
@@ -71,13 +65,24 @@ namespace Reflix.Worker
             Console.WriteLine();
         }
 
+        private static void PrintTitles(List<TitleViewModel> titles)
+        {
+            foreach (var title in titles)
+            {
+                Console.WriteLine("{0} {1}: {2}", title.RssWeekNumber, title.RssWeekOf, title.Title);
+            }
+        }
+
         private static void AddNewTitles(DateTime targetDate, List<ICustomSiteParser> parsers)
         {
+            Console.WriteLine("Retrieving existing titles for {0}", targetDate);
             var existingTitles = GetExistingTitles(targetDate);
+            PrintTitles(existingTitles);
 
             var newTitles = new List<TitleViewModel>();
             foreach (var parser in parsers)
             {
+                Console.WriteLine("\nRetrieving new titles for {0}", parser.Name);
                 var list = parser.ParseRssList();
                 newTitles.AddRange(list.AsEnumerable());
             }
@@ -104,8 +109,8 @@ namespace Reflix.Worker
         private static List<TitleViewModel> GetExistingTitles(DateTime targetDate)
         {
             var client = new RestClient("http://localhost:4204/api");
-            var request = new RestRequest("Title/GetByTargetDate", Method.GET);
-            request.AddParameter("targetDate", targetDate.ToString("yyyy-MM-dd"));
+            var request = new RestRequest("Title", Method.GET);
+            //request.AddParameter("targetDate", targetDate.ToString("yyyy-MM-dd"));
 
             var response = client.Execute(request);
             string responseString = response.Content;

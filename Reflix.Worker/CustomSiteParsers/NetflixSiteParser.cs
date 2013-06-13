@@ -13,7 +13,9 @@ namespace Reflix.Worker.CustomSiteParsers
 {
     class NetflixSiteParser : BaseSiteParser, ICustomSiteParser
     {
-        public NetflixSiteParser(string url, DateTime startDate) : base(url, startDate) { }
+        public NetflixSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
+
+        public string Name { get { return base._name; } }
 
         public List<TitleViewModel> ParseRssList()
         {

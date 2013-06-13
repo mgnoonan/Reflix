@@ -10,6 +10,12 @@ namespace Reflix
         public static void Register(HttpConfiguration config)
         {
             config.Routes.MapHttpRoute(
+                name: "TitleWithDate",
+                routeTemplate: "api/Title/{targetDate}"
+                //defaults: new { targetDate = RouteParameter.Optional }
+            );
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }

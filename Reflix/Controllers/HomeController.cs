@@ -1,4 +1,5 @@
-﻿using Reflix.Models;
+﻿using NCI.Utility;
+using Reflix.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Reflix.Controllers
             {
                 DateTime calculatedStartDate;
                 if (!startDate.HasValue)
-                    calculatedStartDate = CalculateStartDate();
+                    calculatedStartDate = Utils.CalculateStartDate();
                 else
                     calculatedStartDate = startDate.Value.Date;
 
@@ -49,20 +50,10 @@ namespace Reflix.Controllers
             return View();
         }
 
-        private DateTime CalculateStartDate()
-        {
-            DateTime testDate = DateTime.Now.Date;
-
-            //if (testDate.Day == (int)DayOfWeek.Sunday)
-            //    return testDate;
-
-            return testDate.AddDays(-(int)testDate.DayOfWeek);
-        }
-
         private List<TitleViewModel> GetRssTitlesFromEmbeddedStore(DateTime newStartDate, DateTime newEndDate)
         {
             var query = from title in this.RavenSession.Query<TitleViewModel>()
-                        where title.RssDate >= newStartDate && title.RssDate <= newEndDate
+                        where title.RssWeekOf >= newStartDate && title.RssWeekOf <= newEndDate
                         select title;
 
             return query.ToList();
