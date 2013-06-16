@@ -29,11 +29,11 @@ namespace Reflix.Controllers
             return query.SingleOrDefault();
         }
 
-        // GET api/title/getbytargetdate
+        // GET api/title?targetDate=yyyy-MM-dd
         public IEnumerable<TitleViewModel> GetByTargetDate(DateTime targetDate)
         {
             var query = from title in this.RavenSession.Query<TitleViewModel>()
-                        where title.RssWeekOf == targetDate.Date
+                        where title.RssWeekOf >= targetDate.Date && title.RssWeekOf <= targetDate.Date.AddDays(1)
                         select title;
 
             return query.AsEnumerable();
