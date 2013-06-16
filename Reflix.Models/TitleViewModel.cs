@@ -8,12 +8,13 @@ namespace Reflix.Models
 {
     public class TitleViewModel
     {
-        public TitleViewModel(MovieTitle title, bool isRss, DateTime weekOfDate)
+        public TitleViewModel(MovieTitle title, string source, DateTime weekOfDate)
         {
             this.Title = title;
-            this.IsRss = isRss;
-            this.RssWeekOf = weekOfDate;
-            this.RssWeekNumber = GetWeekNumber(weekOfDate);
+            this.Source = source;
+            this.IsRss = true;
+            this.RssWeekOf = weekOfDate.Date;
+            this.RssWeekNumber = GetWeekNumber(weekOfDate.Date);
         }
 
         public TitleViewModel()
@@ -23,6 +24,7 @@ namespace Reflix.Models
 
         public MovieTitle Title { get; set; }
         public bool IsRss { get; set; }
+        public string Source { get; set; }
         public DateTime RssWeekOf { get; set; }
         public short RssWeekNumber { get; set; }
 

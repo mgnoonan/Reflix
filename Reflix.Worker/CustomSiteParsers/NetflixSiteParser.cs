@@ -28,42 +28,43 @@ namespace Reflix.Worker.CustomSiteParsers
                 from post in rssDoc.Descendants("item")
                 select new Post(post);
 
-            var newTitleList = new List<TitleViewModel>();
+            //var newTitleList = new List<TitleViewModel>();
 
             // Add any RSS entries
             foreach (var post in posts)
             {
-                if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
+                Console.WriteLine("Parsing '{0}'", post.Title);
+                //if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
+                //{
+                var feedTitle = new MovieTitle
                 {
-                    var feedTitle = new MovieTitle
-                    {
-                        Id = post.Guid.Substring(post.Guid.LastIndexOf('/') + 1),
-                        Name = post.Title,
-                        Url = post.Url,
-                        Synopsis = post.Description,
-                        Cast = new List<MoviePerson>(),
-                        Directors = new List<MoviePerson>(),
-                        Genres = new List<string>(),
-                        BoxArt = post.ImageUrl,
-                        ReleaseYear = DateTime.Now.Year,
-                        Rating = "N/A",
-                        Runtime = 0
-                    };
+                    Id = post.Guid.Substring(post.Guid.LastIndexOf('/') + 1),
+                    Name = post.Title,
+                    Url = post.Url,
+                    Synopsis = post.Description,
+                    Cast = new List<MoviePerson>(),
+                    Directors = new List<MoviePerson>(),
+                    Genres = new List<string>(),
+                    BoxArt = post.ImageUrl,
+                    ReleaseYear = DateTime.Now.Year,
+                    Rating = "N/A",
+                    Runtime = 0
+                };
 
-                    MovieTitle netflixTitle = null;
-                    netflixTitle = ParseRssItem(feedTitle);
+                MovieTitle netflixTitle = null;
+                netflixTitle = ParseRssItem(feedTitle);
 
-                    if (netflixTitle == null)
-                    {
-                        var newTitle = new TitleViewModel(feedTitle, true, base._startDate);
-                        originalTitles.Add(newTitle);
-                    }
-                    else
-                    {
-                        var newTitle = new TitleViewModel(netflixTitle, true, base._startDate);
-                        originalTitles.Add(newTitle);
-                    }
+                if (netflixTitle == null)
+                {
+                    var newTitle = new TitleViewModel(feedTitle, this.Name, base._startDate);
+                    originalTitles.Add(newTitle);
                 }
+                else
+                {
+                    var newTitle = new TitleViewModel(netflixTitle, this.Name, base._startDate);
+                    originalTitles.Add(newTitle);
+                }
+                //}
             }
 
             return originalTitles;

@@ -21,12 +21,20 @@ namespace Reflix.Models
         public string Link { get; private set; }
         public string Guid { get; private set; }
 
-        private static string GetElementValue(XContainer element, string name)
+        private static string GetElementValue(XContainer container, string elementName)
         {
-            if ((element == null) || (element.Element(name) == null))
+            if ((container == null) || (container.Element(elementName) == null))
                 return String.Empty;
 
-            return element.Element(name).Value;
+            return container.Element(elementName).Value;
+        }
+
+        private static string GetAttributeValue(XElement element, string attributeName)
+        {
+            if ((element == null) || (element.Attribute(attributeName) == null))
+                return String.Empty;
+
+            return element.Attribute(attributeName).Value;
         }
 
         public Post(XContainer post)
@@ -55,6 +63,13 @@ namespace Reflix.Models
                 //string lastFour = imageFile.Substring(imageFile.Length - 8, 4);
 
                 ImageUrl = imageUrl.Replace("/small/", "/large/");
+            }
+
+            // Some RSS feeds set the enclosure link, this will override any previous value
+            string enclosureLink = GetAttributeValue(post.Element("enclosure"), "url");
+            if (!string.IsNullOrWhiteSpace(enclosureLink))
+            {
+                ImageUrl = enclosureLink;
             }
 
             // The Date property is a nullable DateTime? -- if the pubDate element

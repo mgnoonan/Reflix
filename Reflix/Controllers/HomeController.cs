@@ -26,6 +26,27 @@ namespace Reflix.Controllers
                 ViewBag.Message = string.Format("Week of {0}", calculatedStartDate.ToString("d-MMM-yyyy"));
                 ViewBag.StartDate = calculatedStartDate;
                 ViewBag.EndDate = calculatedEndDate;
+                ViewBag.DisplayAll = false;
+
+                return View("IndexMBS", modelList.OrderBy(t => t.Title.Name).ToList());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(ex.Message);
+                throw;
+            }
+        }
+
+        public ActionResult ListAll()
+        {
+            try
+            {
+                var modelList = GetRssTitlesFromEmbeddedStore();
+
+                ViewBag.Message = "All entries";
+                ViewBag.StartDate = DateTime.MaxValue;
+                ViewBag.EndDate = DateTime.MaxValue;
+                ViewBag.DisplayAll = true;
 
                 return View("IndexMBS", modelList.OrderBy(t => t.Title.Name).ToList());
             }
@@ -54,6 +75,15 @@ namespace Reflix.Controllers
         {
             var query = from title in this.RavenSession.Query<TitleViewModel>()
                         where title.RssWeekOf >= newStartDate && title.RssWeekOf <= newEndDate
+                        select title;
+
+            return query.ToList();
+        }
+
+        private List<TitleViewModel> GetRssTitlesFromEmbeddedStore()
+        {
+            var query = from title in this.RavenSession.Query<TitleViewModel>()
+                        //where title.RssWeekOf >= newStartDate && title.RssWeekOf <= newEndDate
                         select title;
 
             return query.ToList();

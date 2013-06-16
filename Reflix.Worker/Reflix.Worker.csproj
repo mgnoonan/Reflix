@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomSiteParsers\BaseSiteParser.cs" />
+    <Compile Include="CustomSiteParsers\BlockbusterSiteParser.cs" />
     <Compile Include="CustomSiteParsers\ICustomSiteParser.cs" />
     <Compile Include="CustomSiteParsers\MoviesDotComSiteParser.cs" />
     <Compile Include="CustomSiteParsers\NetflixSiteParser.cs" />

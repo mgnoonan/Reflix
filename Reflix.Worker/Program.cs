@@ -19,20 +19,21 @@ namespace Reflix.Worker
         static void Main(string[] args)
         {
             // Print banner to console
-            Console.WriteLine("\nRSSFeed");
+            Console.WriteLine("\nReflix.Worker");
             Console.WriteLine("------------\n");
 
             try
             {
                 // Open the logfile
-                logfile.Open("RSSFeed.log");
+                logfile.Open("Reflix.Worker.log");
                 logfile.ConsoleOutput = true;
-                logfile.WriteLine("RSSFeed starting");
+                logfile.WriteLine("Reflix.Worker starting");
 
                 DateTime targetDate = Utils.CalculateStartDate();
                 var parsers = new List<ICustomSiteParser>();
-                //parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
+                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
                 parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate, "Movies.com"));
+                //parsers.Add(new BlockbusterSiteParser("http://www.blockbuster.com/rss/newRelease", targetDate, "Blockbuster"));
 
                 AddNewTitles(targetDate, parsers);
             }
@@ -69,13 +70,13 @@ namespace Reflix.Worker
         {
             foreach (var title in titles)
             {
-                Console.WriteLine("{0} {1}: {2}", title.RssWeekNumber, title.RssWeekOf, title.Title);
+                Console.WriteLine("{0} [{1}]: {2}", title.RssWeekNumber, title.Title.Id, title.Title.Name);
             }
         }
 
         private static void AddNewTitles(DateTime targetDate, List<ICustomSiteParser> parsers)
         {
-            Console.WriteLine("Retrieving existing titles for {0}", targetDate);
+            Console.WriteLine("Retrieving existing titles for {0:yyyy-MM-dd}", targetDate);
             var existingTitles = GetExistingTitles(targetDate);
             PrintTitles(existingTitles);
 
@@ -87,19 +88,26 @@ namespace Reflix.Worker
                 newTitles.AddRange(list.AsEnumerable());
             }
 
+            Console.WriteLine("\nSaving new titles");
             foreach (var title in newTitles)
             {
-                if (existingTitles.Any(e => e.Title.Id == title.Title.Id))
+                if (existingTitles.Any(e => e.Title.Id == title.Title.Id) ||
+                    existingTitles.Any(e => e.Title.Name == title.Title.Name))
                     continue;
 
                 var client = new RestClient("http://localhost:4204/api");
                 var request = new RestRequest("Title", Method.POST);
                 request.RequestFormat = DataFormat.Json;
                 request.AddBody(title);
-                //var response = client.Execute<TitleViewModel>(request);
+
+                Console.WriteLine("Posting new title '{0}'", title.Title.Name);
                 var response = client.Post<TitleViewModel>(request);
 
-                if (response.StatusCode != HttpStatusCode.Created)
+                if (response.StatusCode == HttpStatusCode.Created)
+                {
+                    existingTitles.Add(title);
+                }
+                else
                 {
                     throw new Exception(string.Format("Error {0}", response.StatusCode));
                 }
@@ -110,7 +118,7 @@ namespace Reflix.Worker
         {
             var client = new RestClient("http://localhost:4204/api");
             var request = new RestRequest("Title", Method.GET);
-            //request.AddParameter("targetDate", targetDate.ToString("yyyy-MM-dd"));
+            request.AddParameter("targetDate", targetDate.Date.ToString("yyyy-MM-dd"));
 
             var response = client.Execute(request);
             string responseString = response.Content;

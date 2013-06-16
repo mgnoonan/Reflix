@@ -22,6 +22,27 @@ namespace Reflix.Worker.CustomSiteParsers
             _name = name;
         }
 
+        public MovieTitle SearchNetflixTitle(MovieTitle title)
+        {
+            string url = "http://dvd.netflix.com/Search?v1=" + title.Name.Replace(" ", "+");
+            string html = Utils.GetHttpWebResponse(url, null, new System.Net.CookieContainer());
+            var document = new HtmlDocument();
+            document.LoadHtml(html);
+
+            //*[@id="searchResultsPrimaryWrapper"]/ol/li[1]/div
+            var titleHeaderNode = document.DocumentNode.SelectSingleNode("//*[@id='searchResultsPrimaryWrapper']/ol/li[1]/div");
+            if (titleHeaderNode == null)
+                return title;
+
+            string netflixID = titleHeaderNode.Attributes["id"].Value;
+            int startIndex = 0;
+            int endIndex = netflixID.LastIndexOf("_");
+            int len = endIndex - startIndex;
+            title.Id = netflixID.Substring(startIndex, len);
+
+            return ParseNetflixTitle(title);
+        }
+
         public MovieTitle ParseNetflixTitle(MovieTitle title)
         {
             string html = Utils.GetHttpWebResponse(title.Url, null, new System.Net.CookieContainer());
