@@ -134,9 +134,9 @@ namespace Reflix.Worker.CustomSiteParsers
             var directorNodes = document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[5]/a");
             foreach (var directorNode in directorNodes)
             {
-                string parsedID = directorNode.Attributes["href"].Value;
-                parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = directorNode.InnerText.Trim() });
+                string url = directorNode.Attributes["href"].Value.Trim();
+                string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = directorNode.InnerText.Trim(), Url = url });
             }
 
             // Cast
@@ -147,9 +147,9 @@ namespace Reflix.Worker.CustomSiteParsers
                 if (castNode.InnerText.Trim() == "Full cast + crew")
                     break;
 
-                string parsedID = castNode.Attributes["href"].Value;
-                parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = castNode.InnerText.Trim() });
+                string url = castNode.Attributes["href"].Value;
+                string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = castNode.InnerText.Trim(), Url = url });
             }
 
             // Genres

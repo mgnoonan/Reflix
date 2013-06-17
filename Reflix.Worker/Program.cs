@@ -95,7 +95,11 @@ namespace Reflix.Worker
                     existingTitles.Any(e => e.Title.Name == title.Title.Name))
                     continue;
 
+#if DEBUG
                 var client = new RestClient("http://localhost:4204/api");
+#else
+                var client = new RestClient("http://reflix.azurewebsites.net/api");
+#endif
                 var request = new RestRequest("Title", Method.POST);
                 request.RequestFormat = DataFormat.Json;
                 request.AddBody(title);
@@ -116,7 +120,11 @@ namespace Reflix.Worker
 
         private static List<TitleViewModel> GetExistingTitles(DateTime targetDate)
         {
+#if DEBUG
             var client = new RestClient("http://localhost:4204/api");
+#else
+            var client = new RestClient("http://reflix.azurewebsites.net/api");
+#endif
             var request = new RestRequest("Title", Method.GET);
             request.AddParameter("targetDate", targetDate.Date.ToString("yyyy-MM-dd"));
 

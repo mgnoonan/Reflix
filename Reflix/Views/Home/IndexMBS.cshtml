@@ -46,22 +46,19 @@
                     <td style="width: 100px; text-align: right;"><strong>Cast:</strong></td>
                     <td>@foreach (var actor in m.Title.Cast)
                     {
-                        <a href="@string.Format("http://dvd.netflix.com/RoleDisplay/{0}/{1}", actor.Name.Replace(" ", "_"), actor.Id)">@actor.Name</a><span>,</span>
+                        <a href="@actor.Url" target="_blank">@actor.Name</a><span>,</span>
                     }</td>
                 </tr>
                 <tr>
                     <td style="width: 100px; text-align: right;"><strong>Director:</strong></td>
                     <td>@foreach (var director in m.Title.Directors)
                     {
-                        <a href="@string.Format("http://dvd.netflix.com/RoleDisplay/{0}/{1}", director.Name.Replace(" ", "_"), director.Id)">@director.Name</a>
+                        <a href="@director.Url" target="_blank">@director.Name</a>
                     }</td>
                 </tr>
                 <tr>
                     <td style="width: 100px; text-align: right;"><strong>Genre:</strong></td>
-                    <td>@foreach (var genre in m.Title.Genres)
-                    {
-                        @(genre + ", ")
-                    }</td>
+                    <td>@string.Join(", ", m.Title.Genres.ToArray())</td>
                 </tr>
             </table>
             <div class="row">

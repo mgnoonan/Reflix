@@ -66,9 +66,9 @@ namespace Reflix.Worker.CustomSiteParsers
                 nodes = document.DocumentNode.SelectNodes("//*[@id='support']/div[1]/a");
                 foreach (var node in nodes)
                 {
-                    string parsedID = node.Attributes["href"].Value;
-                    parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                    title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim() });
+                    string url = node.Attributes["href"].Value.Trim();
+                    string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                    title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim(), Url = url });
                 }
             }
             catch { }
@@ -79,9 +79,9 @@ namespace Reflix.Worker.CustomSiteParsers
                 nodes = document.DocumentNode.SelectNodes("//*[@id='support']/div[2]/a");
                 foreach (var node in nodes)
                 {
-                    string parsedID = node.Attributes["href"].Value;
-                    parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                    title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim() });
+                    string url = node.Attributes["href"].Value.Trim();
+                    string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                    title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim(), Url = url });
                 }
             }
             catch { }
