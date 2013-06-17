@@ -57,6 +57,13 @@ namespace Reflix.Controllers
             }
         }
 
+        public ActionResult Delete(string id)
+        {
+            DeleteRssTitle(id.Replace("_", ":"));
+
+            return RedirectToAction("Index");
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Data sources:";
@@ -87,6 +94,15 @@ namespace Reflix.Controllers
                         select title;
 
             return query.ToList();
+        }
+
+        private void DeleteRssTitle(string id)
+        {
+            var item = (from title in this.RavenSession.Query<TitleViewModel>()
+                       where title.Title.Id == id
+                       select title).SingleOrDefault();
+
+            this.RavenSession.Delete(item);
         }
     }
 }

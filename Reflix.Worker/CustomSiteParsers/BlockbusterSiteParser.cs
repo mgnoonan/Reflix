@@ -32,9 +32,12 @@ namespace Reflix.Worker.CustomSiteParsers
             // Add any RSS entries
             foreach (var post in posts) //.Where(p => p.Date >= base._startDate && p.Date <= base._startDate.AddDays(6)))
             {
+                Console.WriteLine("Checking release date '{0}'", post.Title);
+                var releaseDate = ParseReleaseDate(post);
+                if (releaseDate.Date <= base._startDate.Date.AddDays(-7))
+                    continue;
+
                 Console.WriteLine("Parsing '{0}'", post.Title);
-                //if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
-                //{
                 var feedTitle = new MovieTitle
                 {
                     Id = "B:" + post.Url.Substring(post.Url.LastIndexOf('/') + 1),
@@ -63,10 +66,59 @@ namespace Reflix.Worker.CustomSiteParsers
                     var newTitle = new TitleViewModel(netflixTitle, this.Name, base._startDate);
                     originalTitles.Add(newTitle);
                 }
-                //}
             }
 
             return originalTitles;
+        }
+
+        private DateTime ParseReleaseDate(Post post)
+        {
+            string html = Utils.GetHttpWebResponse(post.Url, null, new System.Net.CookieContainer());
+            var document = new HtmlDocument();
+            document.LoadHtml(html);
+
+            // Get the link to more release info
+            //*[@id="mainContainer"]/div[1]/div/dl[4]/dd/a
+            //*[@id="mainContainer"]/div[1]/div/dl[3]/dd/a
+            var linkNode = document.DocumentNode.SelectSingleNode("//*[@id='mainContainer']/div[1]/div/dl[4]/dd/a");
+            if (linkNode == null)
+            {
+                linkNode = document.DocumentNode.SelectSingleNode("//*[@id='mainContainer']/div[1]/div/dl[3]/dd/a");
+            }
+            string href = "http://www.blockbuster.com" + linkNode.Attributes["href"].Value.Trim();
+
+            html = Utils.GetHttpWebResponse(href, null, new System.Net.CookieContainer());
+            document = new HtmlDocument();
+            document.LoadHtml(html);
+
+            // Get the release date
+            // /html/body/div[1]/div[6]/div[1]/div[1]/div[2]/div[2]
+            // /html/body/div[1]/div[6]/div[1]/div[1]/div[5]/div[2]
+            var releaseNode = document.DocumentNode.SelectSingleNode("/html/body/div[1]/div[6]/div[1]/div[1]/div[2]/div[2]");
+            string para = releaseNode.InnerText.Trim();
+            if (para.Contains("Format: DVD"))
+            {
+                int startIndex = para.IndexOf("Release Date: ") + 14;
+                int len = 10;
+                string releaseDate = para.Substring(startIndex, len);
+                return DateTime.Parse(releaseDate);
+            }
+            else
+            {
+                releaseNode = document.DocumentNode.SelectSingleNode("/html/body/div[1]/div[6]/div[1]/div[1]/div[5]/div[2]");
+                para = releaseNode.InnerText.Trim();
+                if (para.Contains("Format: DVD"))
+                {
+                    int startIndex = para.IndexOf("Release Date: ") + 14;
+                    int len = 10;
+                    string releaseDate = para.Substring(startIndex, len);
+                    return DateTime.Parse(releaseDate);
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
         }
 
         public MovieTitle ParseRssItem(MovieTitle title)
@@ -106,9 +158,19 @@ namespace Reflix.Worker.CustomSiteParsers
             foreach (var directorNodeDD in directorNodes)
             {
                 var directorNode = directorNodeDD.SelectSingleNode(directorNodeDD.XPath + "/a");
-                string parsedID = directorNode.Attributes["href"].Value;
-                parsedID = parsedID.Substring(parsedID.LastIndexOf('/') + 1);
-                title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = directorNode.InnerText.Trim() });
+                string url = "http://www.blockbuster.com" + directorNode.Attributes["href"].Value;
+                string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = directorNode.InnerText.Trim(), Url = url });
+            }
+
+            // Cast
+            //*[@id="tabPanel1"]/p/a[1]
+            var castNodes = document.DocumentNode.SelectNodes("//*[@id='tabPanel1']/p/a");
+            foreach (var castNode in castNodes)
+            {
+                string url = "http://www.blockbuster.com" + castNode.Attributes["href"].Value;
+                string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = castNode.InnerText.Trim(), Url = url });
             }
 
             // Synopsis

@@ -70,6 +70,7 @@
             {
                 <a class="btn btn-primary" href="@("http://dvd.netflix.com/Search?v1=" + m.Title.Name.Replace(" ", "+"))" target="_blank">Search Netflix</a>
                 <a class="btn btn-primary" href="@m.Title.Url" target="_blank">Open in @m.Source</a>
+                <!-- @Html.ActionLink("Delete", "Delete", new { id = m.Title.Id.Replace(":", "_") }) -->
             }
             else
             { 
