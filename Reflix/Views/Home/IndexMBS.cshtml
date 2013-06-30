@@ -46,14 +46,24 @@
                     <td style="width: 100px; text-align: right;"><strong>Cast:</strong></td>
                     <td>@foreach (var actor in m.Title.Cast)
                     {
-                        <a href="@actor.Url" target="_blank">@actor.Name</a><span>,</span>
+                        if (string.IsNullOrWhiteSpace(actor.Url)) { 
+                            @actor.Name<span>,</span>
+                        }
+                        else { 
+                            <a href="@actor.Url" target="_blank">@actor.Name</a><span>,</span>
+                        }
                     }</td>
                 </tr>
                 <tr>
                     <td style="width: 100px; text-align: right;"><strong>Director:</strong></td>
                     <td>@foreach (var director in m.Title.Directors)
                     {
-                        <a href="@director.Url" target="_blank">@director.Name</a>
+                        if (string.IsNullOrWhiteSpace(director.Url)) { 
+                            @director.Name<span>,</span>
+                        }
+                        else { 
+                            <a href="@director.Url" target="_blank">@director.Name</a>
+                        }
                     }</td>
                 </tr>
                 <tr>

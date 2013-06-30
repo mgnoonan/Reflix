@@ -14,12 +14,12 @@ namespace Reflix.Worker.CustomSiteParsers
     {
         public BlockbusterSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
 
-        public string Name { get { return base._name; } }
+        public string Name { get { return base._sourceName; } }
 
         public List<TitleViewModel> ParseRssList()
         {
             var originalTitles = new List<TitleViewModel>();
-            var rssDoc = XDocument.Load(base._url);
+            var rssDoc = XDocument.Load(base._sourceUrl);
             //Console.WriteLine(rssDoc.Element("rss").Element("channel").Element("title").Value);
 
             // Query the <item>s in the XML RSS data and select each one into a new Post()
@@ -34,7 +34,7 @@ namespace Reflix.Worker.CustomSiteParsers
             {
                 Console.WriteLine("Checking release date '{0}'", post.Title);
                 var releaseDate = ParseReleaseDate(post);
-                if (releaseDate.Date <= base._startDate.Date.AddDays(-7))
+                if (releaseDate.Date <= base._sundayWeekOfDate.Date.AddDays(-7))
                     continue;
 
                 Console.WriteLine("Parsing '{0}'", post.Title);
@@ -58,12 +58,12 @@ namespace Reflix.Worker.CustomSiteParsers
 
                 if (netflixTitle == null)
                 {
-                    var newTitle = new TitleViewModel(feedTitle, this.Name, base._startDate);
+                    var newTitle = new TitleViewModel(feedTitle, this.Name, base._sundayWeekOfDate);
                     originalTitles.Add(newTitle);
                 }
                 else
                 {
-                    var newTitle = new TitleViewModel(netflixTitle, this.Name, base._startDate);
+                    var newTitle = new TitleViewModel(netflixTitle, this.Name, base._sundayWeekOfDate);
                     originalTitles.Add(newTitle);
                 }
             }

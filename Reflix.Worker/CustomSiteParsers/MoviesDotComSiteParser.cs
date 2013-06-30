@@ -15,12 +15,12 @@ namespace Reflix.Worker.CustomSiteParsers
     {
         public MoviesDotComSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
 
-        public string Name { get { return base._name; } }
+        public string Name { get { return base._sourceName; } }
 
         public List<TitleViewModel> ParseRssList()
         {
             var originalTitles = new List<TitleViewModel>();
-            var rssDoc = XDocument.Load(base._url);
+            var rssDoc = XDocument.Load(base._sourceUrl);
             //Console.WriteLine(rssDoc.Element("rss").Element("channel").Element("title").Value);
 
             // Query the <item>s in the XML RSS data and select each one into a new Post()
@@ -31,7 +31,7 @@ namespace Reflix.Worker.CustomSiteParsers
             //var newTitleList = new List<TitleViewModel>();
 
             // Add any RSS entries
-            foreach (var post in posts.Where(p => p.Date >= base._startDate && p.Date <= base._startDate.AddDays(6)))
+            foreach (var post in posts.Where(p => p.Date >= base._sundayWeekOfDate && p.Date <= base._sundayWeekOfDate.AddDays(6)))
             {
                 Console.WriteLine("Parsing '{0}'", post.Title);
                 //if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
@@ -56,12 +56,12 @@ namespace Reflix.Worker.CustomSiteParsers
 
                 if (netflixTitle == null)
                 {
-                    var newTitle = new TitleViewModel(feedTitle, this.Name, base._startDate);
+                    var newTitle = new TitleViewModel(feedTitle, this.Name, base._sundayWeekOfDate);
                     originalTitles.Add(newTitle);
                 }
                 else
                 {
-                    var newTitle = new TitleViewModel(netflixTitle, this.Name, base._startDate);
+                    var newTitle = new TitleViewModel(netflixTitle, this.Name, base._sundayWeekOfDate);
                     originalTitles.Add(newTitle);
                 }
                 //}
@@ -120,7 +120,7 @@ namespace Reflix.Worker.CustomSiteParsers
             // Rating
             //*[@id="movieSpecs"]/li[2]/img
             var ratingNode = document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[2]/img");
-            string rating = ratingNode.Attributes["title"].Value.Trim();
+            string rating = ratingNode == null ? "N/A" : ratingNode.Attributes["title"].Value.Trim();
             title.Rating = rating.Substring(rating.IndexOf(" ") + 1).ToUpper();
 
             // Running time
@@ -132,24 +132,30 @@ namespace Reflix.Worker.CustomSiteParsers
             // Director(s)
             //*[@id="movieSpecs"]/li[5]/a
             var directorNodes = document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[5]/a");
-            foreach (var directorNode in directorNodes)
+            if (directorNodes != null)
             {
-                string url = directorNode.Attributes["href"].Value.Trim();
-                string parsedID = url.Substring(url.LastIndexOf('/') + 1);
-                title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = directorNode.InnerText.Trim(), Url = url });
+                foreach (var directorNode in directorNodes)
+                {
+                    string url = directorNode.Attributes["href"].Value.Trim();
+                    string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                    title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = directorNode.InnerText.Trim(), Url = url });
+                }
             }
 
             // Cast
             //*[@id="movieSpecs"]/li[6]/a
             var castNodes = document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[6]/a");
-            foreach (var castNode in castNodes)
+            if (castNodes != null)
             {
-                if (castNode.InnerText.Trim() == "Full cast + crew")
-                    break;
+                foreach (var castNode in castNodes)
+                {
+                    if (castNode.InnerText.Trim() == "Full cast + crew")
+                        break;
 
-                string url = castNode.Attributes["href"].Value;
-                string parsedID = url.Substring(url.LastIndexOf('/') + 1);
-                title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = castNode.InnerText.Trim(), Url = url });
+                    string url = castNode.Attributes["href"].Value;
+                    string parsedID = url.Substring(url.LastIndexOf('/') + 1);
+                    title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID.Substring(1)), Name = castNode.InnerText.Trim(), Url = url });
+                }
             }
 
             // Genres

@@ -11,15 +11,15 @@ namespace Reflix.Worker.CustomSiteParsers
 {
     public class BaseSiteParser
     {
-        protected string _url;
-        protected DateTime _startDate;
-        protected string _name;
+        protected string _sourceUrl;
+        protected DateTime _sundayWeekOfDate;
+        protected string _sourceName;
 
         public BaseSiteParser(string url, DateTime startDate, string name)
         {
-            _url = url;
-            _startDate = startDate;
-            _name = name;
+            _sourceUrl = url;
+            _sundayWeekOfDate = startDate;
+            _sourceName = name;
         }
 
         public MovieTitle SearchNetflixTitle(MovieTitle title)
