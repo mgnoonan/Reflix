@@ -111,29 +111,34 @@ namespace Reflix.Worker.CustomSiteParsers
             string id = title.Url.Substring(startIndex, len);
             title.Id = "M:" + id;
 
+            // Get the moviespec nodes
+            var movieSpecNodes = document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li");
+
             // Release date
             //*[@id="movieSpecs"]/li[1]
-            var releaseDateNode = document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[1]");
+            var releaseDateNode = ParseMovieSpecByLabel(movieSpecNodes, "Release Date");
             string releaseDate = releaseDateNode.InnerText.Trim();
             title.ReleaseYear = Convert.ToInt32(releaseDate.Substring(releaseDate.IndexOf(",") + 1));
 
             // Rating
             //*[@id="movieSpecs"]/li[2]/img
-            var ratingNode = document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[2]/img");
-            string rating = ratingNode == null ? "N/A" : ratingNode.Attributes["title"].Value.Trim();
+            var ratingNode = ParseMovieSpecByLabel(movieSpecNodes, "Rated"); //document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[2]/img");
+            var imgNodes = ParseMovieSpecNode(ratingNode.InnerHtml, "//img");
+            string rating = imgNodes == null ? "N/A" : imgNodes[0].Attributes["title"].Value.Trim();
             title.Rating = rating.Substring(rating.IndexOf(" ") + 1).ToUpper();
 
             // Running time
             //*[@id="movieSpecs"]/li[3]
-            var runningTimeNode = document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[3]");
+            var runningTimeNode = ParseMovieSpecByLabel(movieSpecNodes, "Runtime"); //document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[3]");
             string runtime = runningTimeNode == null ? "0 " : runningTimeNode.InnerText.Trim();
             title.Runtime = ConvertRunningTime(runtime);
 
             // Director(s)
             //*[@id="movieSpecs"]/li[5]/a
-            var directorNodes = document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[5]/a");
-            if (directorNodes != null)
+            var directorLineNode = ParseMovieSpecByLabel(movieSpecNodes, "Director"); //document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[5]/a");
+            if (directorLineNode != null)
             {
+                var directorNodes = ParseMovieSpecNode(directorLineNode.InnerHtml, "//a");
                 foreach (var directorNode in directorNodes)
                 {
                     string url = directorNode.Attributes["href"].Value.Trim();
@@ -144,9 +149,10 @@ namespace Reflix.Worker.CustomSiteParsers
 
             // Cast
             //*[@id="movieSpecs"]/li[6]/a
-            var castNodes = document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[6]/a");
-            if (castNodes != null)
+            var castLineNode = ParseMovieSpecByLabel(movieSpecNodes, "Cast"); //document.DocumentNode.SelectNodes("//*[@id='movieSpecs']/li[6]/a");
+            if (castLineNode != null)
             {
+                var castNodes = ParseMovieSpecNode(castLineNode.InnerHtml, "//a");
                 foreach (var castNode in castNodes)
                 {
                     if (castNode.InnerText.Trim() == "Full cast + crew")
@@ -160,7 +166,7 @@ namespace Reflix.Worker.CustomSiteParsers
 
             // Genres
             //*[@id="movieSpecs"]/li[4]
-            var genreNode = document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[4]");
+            var genreNode = ParseMovieSpecByLabel(movieSpecNodes, "Genres"); //document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[4]");
             string genres = genreNode == null ? "0 " : genreNode.InnerText.Trim().Replace("Genres:", string.Empty);
             foreach (var genre in genres.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
             {
@@ -179,6 +185,28 @@ namespace Reflix.Worker.CustomSiteParsers
 
             return title;
             //}
+        }
+
+        private HtmlNode ParseMovieSpecByLabel(HtmlNodeCollection nodes, string labelToSelect)
+        {
+            foreach (var node in nodes)
+            {
+                string text = node.InnerText.Trim();
+                if (text.StartsWith(labelToSelect))
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
+        private HtmlNodeCollection ParseMovieSpecNode(string html, string nodeSelector)
+        {
+            var document = new HtmlDocument();
+            document.LoadHtml(html);
+
+            return document.DocumentNode.SelectNodes(nodeSelector);
         }
 
         private int ConvertRunningTime(string runtime)

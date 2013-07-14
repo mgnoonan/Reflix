@@ -34,35 +34,37 @@ namespace Reflix.Worker.CustomSiteParsers
             document.LoadHtml(html);
 
             // List of titles by date
-            //*[@id="col1"]/div/div[2]/div
-            var titleNodes = document.DocumentNode.SelectNodes("//*[@id='col1']/div/div[2]/div/a");
+            //*[@id="col1"]/div/div[2]/div[@class='lstEntry_dvd']
+            var dateNodes = document.DocumentNode.SelectNodes("//*[@id='col1']/div/div[2]/div[@class='lstEntry_dvd']");
             bool correctDate = false;
-            foreach (var titleNode in titleNodes)
+            foreach (var dateNode in dateNodes)
             {
-                string className = titleNode.ParentNode.Attributes["class"].Value.Trim();
-                if (className != "lstEntry_dvd")
-                {
-                    continue;
-                }
-                if (titleNode.InnerText == "Pre-Order")
-                {
-                    continue;
-                }
+                //string className = dateNode.ParentNode.Attributes["class"].Value.Trim();
+                //if (className != "lstEntry_dvd")
+                //{
+                //    continue;
+                //}
+                //if (dateNode.InnerText == "Pre-Order")
+                //{
+                //    continue;
+                //}
 
-                string text = titleNode.ParentNode.InnerText.Trim();
+                string text = dateNode.InnerText.Trim();
                 if (text.StartsWith(startDate.ToString("MMMM d")))
                 {
                     correctDate = true;
                 }
                 if (text.StartsWith(endDate.ToString("MMMM d")))
                 {
-                    correctDate = false;
+                    break;
                 }
 
                 if (!correctDate)
                 {
-                    break;
+                    continue;
                 }
+
+                var titleNode = GetTitleNode(dateNode.InnerHtml);
 
                 Console.WriteLine("Parsing '{0}'", titleNode.InnerText);
                 string href = titleNode.Attributes["href"].Value.Trim();
@@ -88,6 +90,14 @@ namespace Reflix.Worker.CustomSiteParsers
             }
 
             return originalTitles;
+        }
+
+        private HtmlNode GetTitleNode(string p)
+        {
+            var document = new HtmlDocument();
+            document.LoadHtml(p);
+
+            return document.DocumentNode.SelectSingleNode("//a");
         }
 
         private string ParseID(string href)
@@ -262,7 +272,7 @@ namespace Reflix.Worker.CustomSiteParsers
             for (int i = 0; i < lines.Length; i += 2)
             {
                 string key = lines[i].Replace(":", "").Trim();
-                if (key == "Trailer" || key.StartsWith("Clip"))
+                if (key.Contains("Trailer") || key.Contains("Teaser") || key.Contains("Clip"))
                     break;
                 string value = lines[i + 1].Trim();
                 dict.Add(key, value);
