@@ -228,10 +228,13 @@ namespace Reflix.Worker.CustomSiteParsers
                 }
             }
 
-            // Synopsis
-            //*[@id="content"]/div[2]/div[1]/p
-            //var synopsisNode = document.DocumentNode.SelectSingleNode("//*[@id='content']/div[2]/div[1]/p");
-            //title.Synopsis = synopsisNode.InnerText;
+            // Editorial Review
+            //*[@id="productDescription"]/div/div
+            var synopsisNode = document.DocumentNode.SelectSingleNode("//*[@id='productDescription']/div/div");
+            if (title.Synopsis.Length == 0 && synopsisNode != null)
+            {
+                title.Synopsis = synopsisNode.InnerText.Trim();
+            }
 
             // BoxArt
             //*[@id="holderMainImage"]/noscript
@@ -255,7 +258,11 @@ namespace Reflix.Worker.CustomSiteParsers
 
             foreach (var item in itemNodes)
             {
-                string[] kvp = item.InnerText.Split(":".ToCharArray());
+                string valueToParse = item.InnerText.Trim();
+                if (!valueToParse.Contains(":"))
+                    continue;
+
+                string[] kvp = valueToParse.Split(":".ToCharArray());
                 string key = kvp[0].Trim();
                 string value = kvp[1].Trim();
                 dict.Add(key, value);
@@ -271,6 +278,9 @@ namespace Reflix.Worker.CustomSiteParsers
 
             for (int i = 0; i < lines.Length; i += 2)
             {
+                if (!lines[i].Contains(":"))
+                    continue;
+
                 string key = lines[i].Replace(":", "").Trim();
                 if (key.Contains("Trailer") || key.Contains("Teaser") || key.Contains("Clip"))
                     break;
