@@ -130,7 +130,7 @@ namespace Reflix.Worker.CustomSiteParsers
             // Running time
             //*[@id="movieSpecs"]/li[3]
             var runningTimeNode = ParseMovieSpecByLabel(movieSpecNodes, "Runtime"); //document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[3]");
-            string runtime = runningTimeNode == null ? "0 " : runningTimeNode.InnerText.Trim();
+            string runtime = runningTimeNode == null ? "0" : runningTimeNode.InnerText.Trim();
             title.Runtime = ConvertRunningTime(runtime);
 
             // Director(s)
@@ -211,6 +211,9 @@ namespace Reflix.Worker.CustomSiteParsers
 
         private int ConvertRunningTime(string runtime)
         {
+            if (runtime == "0")
+                return 0;
+
             string[] values = runtime.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
             int hours = Convert.ToInt32(values[1]);

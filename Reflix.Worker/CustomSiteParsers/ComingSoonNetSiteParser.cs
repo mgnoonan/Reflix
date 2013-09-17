@@ -65,6 +65,8 @@ namespace Reflix.Worker.CustomSiteParsers
                 }
 
                 var titleNode = GetTitleNode(dateNode.InnerHtml);
+                if (titleNode == null)
+                    continue;
 
                 Console.WriteLine("Parsing '{0}'", titleNode.InnerText);
                 string href = titleNode.Attributes["href"].Value.Trim();
