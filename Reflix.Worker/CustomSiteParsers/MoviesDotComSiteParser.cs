@@ -123,9 +123,13 @@ namespace Reflix.Worker.CustomSiteParsers
             // Rating
             //*[@id="movieSpecs"]/li[2]/img
             var ratingNode = ParseMovieSpecByLabel(movieSpecNodes, "Rated"); //document.DocumentNode.SelectSingleNode("//*[@id='movieSpecs']/li[2]/img");
-            var imgNodes = ParseMovieSpecNode(ratingNode.InnerHtml, "//img");
-            string rating = imgNodes == null ? "N/A" : imgNodes[0].Attributes["title"].Value.Trim();
-            title.Rating = rating.Substring(rating.IndexOf(" ") + 1).ToUpper();
+            title.Rating = "N/A";
+            if (ratingNode != null)
+            {
+                var imgNodes = ParseMovieSpecNode(ratingNode.InnerHtml, "//img");
+                string rating = imgNodes == null ? "N/A" : imgNodes[0].Attributes["title"].Value.Trim();
+                title.Rating = rating.Substring(rating.IndexOf(" ") + 1).ToUpper();
+            }
 
             // Running time
             //*[@id="movieSpecs"]/li[3]
