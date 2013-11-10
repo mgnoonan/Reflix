@@ -134,7 +134,14 @@ namespace Reflix.Worker.CustomSiteParsers
             string rating = dict["MPAA Rating"];
             if (rating != "Not Available")
             {
-                title.Rating = rating.Substring(0, rating.IndexOf("(")).Trim().ToUpper();
+                if (rating.Contains("("))
+                {
+                    title.Rating = rating.Substring(0, rating.IndexOf("(")).Trim().ToUpper();
+                }
+                else
+                {
+                    title.Rating = rating.Trim().ToUpper();
+                }
             }
 
             // Director(s)
