@@ -196,7 +196,7 @@ namespace Reflix.Worker.CustomSiteParsers
             title.Id = "Z:" + id;
 
             // Release date
-            string releaseDate = dict["DVD Release Date"];
+            string releaseDate = dict.ContainsKey("DVD Release Date") ? dict["DVD Release Date"] : DateTime.Now.Year.ToString();
             title.ReleaseYear = Convert.ToInt32(releaseDate.Substring(releaseDate.IndexOf(",") + 1));
 
             // Rating
