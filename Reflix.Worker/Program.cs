@@ -30,6 +30,7 @@ namespace Reflix.Worker
                 logfile.WriteLine("Reflix.Worker starting");
 
                 DateTime targetDate = Utils.CalculateStartDate();
+                //DateTime targetDate = new DateTime(2014, 2, 2);
                 var parsers = new List<ICustomSiteParser>();
                 parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
                 parsers.Add(new ComingSoonNetSiteParser("http://www.commingsoon.net/dvd", targetDate, "ComingSoon.net"));
