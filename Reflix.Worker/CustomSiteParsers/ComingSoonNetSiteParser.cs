@@ -126,7 +126,16 @@ namespace Reflix.Worker.CustomSiteParsers
             // Information paragraph (that's all we get on this site)
             //*[@id="subPageContent"]/div/p
             var paraNode = document.DocumentNode.SelectSingleNode("//*[@id='subPageContent']/div/p");
+            if (paraNode == null)
+            {
+                paraNode = document.DocumentNode.SelectSingleNode("//*[@id='subPageContent']/div[1]/p");
+            }
+            
             string para = paraNode == null ? string.Empty : paraNode.InnerText.Trim();
+            if (string.IsNullOrWhiteSpace(para))
+            {
+                return title;
+            }
 
             var dict = ParseDescriptionParagraph(para);
 
@@ -264,6 +273,10 @@ namespace Reflix.Worker.CustomSiteParsers
         private Dictionary<string, string> ParseDetailListItems(HtmlNodeCollection itemNodes)
         {
             var dict = new Dictionary<string, string>();
+            if (itemNodes == null || !itemNodes.Any())
+            {
+                return dict;
+            }
 
             foreach (var item in itemNodes)
             {
@@ -292,6 +305,8 @@ namespace Reflix.Worker.CustomSiteParsers
 
                 string key = lines[i].Replace(":", "").Trim();
                 if (key.Contains("Trailer") || key.Contains("Teaser") || key.Contains("Clip"))
+                    break;
+                if (i > lines.Length)
                     break;
                 string value = lines[i + 1].Trim();
                 dict.Add(key, value);
