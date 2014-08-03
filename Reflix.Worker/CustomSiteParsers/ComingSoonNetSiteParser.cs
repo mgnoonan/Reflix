@@ -86,9 +86,17 @@ namespace Reflix.Worker.CustomSiteParsers
                     Runtime = 0
                 };
 
-                MovieTitle netflixTitle = ParseRssItem(feedTitle);
-                var newTitle = new TitleViewModel(netflixTitle, netflixTitle.Id.StartsWith("Z:") ? "Amazon.com" : this.Name, base._sundayWeekOfDate);
-                originalTitles.Add(newTitle);
+                try
+                {
+                    MovieTitle netflixTitle = ParseRssItem(feedTitle);
+                    var newTitle = new TitleViewModel(netflixTitle, netflixTitle.Id.StartsWith("Z:") ? "Amazon.com" : this.Name, base._sundayWeekOfDate);
+                    originalTitles.Add(newTitle);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error parsing title '{0}'", feedTitle.Name);
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             return originalTitles;
@@ -196,6 +204,7 @@ namespace Reflix.Worker.CustomSiteParsers
 
             // Detail nodes
             //*[@id="detail-bullets"]/table/tbody/tr/td/div/ul/li
+            //*[@id="detail-bullets"]/table/tbody/tr/td/div/ul/li[1]
             var itemNodes = document.DocumentNode.SelectNodes("//*[@id='detail-bullets']/table/tr/td/div/ul/li");
 
             var dict = ParseDetailListItems(itemNodes);
@@ -257,7 +266,7 @@ namespace Reflix.Worker.CustomSiteParsers
             // BoxArt
             //*[@id="holderMainImage"]/noscript
             var boxartNode = document.DocumentNode.SelectSingleNode("//*[@id='holderMainImage']/noscript");
-            title.BoxArt = ParseBoxArtHtml(boxartNode.InnerHtml);
+            title.BoxArt = (boxartNode == null ? string.Empty : ParseBoxArtHtml(boxartNode.InnerHtml));
 
             return title;
         }
@@ -267,7 +276,14 @@ namespace Reflix.Worker.CustomSiteParsers
             var document = new HtmlDocument();
             document.LoadHtml(p);
 
-            return document.DocumentNode.ChildNodes[0].Attributes["src"].Value.Trim();
+            string url = string.Empty;
+            try
+            {
+                url = document.DocumentNode.ChildNodes[0].Attributes["src"].Value.Trim();
+            }
+            catch { }
+
+            return url;
         }
 
         private Dictionary<string, string> ParseDetailListItems(HtmlNodeCollection itemNodes)

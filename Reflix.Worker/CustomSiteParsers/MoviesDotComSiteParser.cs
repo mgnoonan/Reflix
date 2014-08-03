@@ -117,8 +117,15 @@ namespace Reflix.Worker.CustomSiteParsers
             // Release date
             //*[@id="movieSpecs"]/li[1]
             var releaseDateNode = ParseMovieSpecByLabel(movieSpecNodes, "Release Date");
-            string releaseDate = releaseDateNode.InnerText.Trim();
-            title.ReleaseYear = Convert.ToInt32(releaseDate.Substring(releaseDate.IndexOf(",") + 1));
+            if (releaseDateNode == null)
+            {
+                title.ReleaseYear = DateTime.Now.Year;
+            }
+            else
+            {
+                string releaseDate = releaseDateNode.InnerText.Trim();
+                title.ReleaseYear = Convert.ToInt32(releaseDate.Substring(releaseDate.IndexOf(",") + 1));
+            }
 
             // Rating
             //*[@id="movieSpecs"]/li[2]/img
