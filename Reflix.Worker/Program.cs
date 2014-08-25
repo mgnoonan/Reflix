@@ -32,8 +32,8 @@ namespace Reflix.Worker
                 DateTime targetDate = Utils.CalculateStartDate();
                 //DateTime targetDate = new DateTime(2014, 5, 4);
                 var parsers = new List<ICustomSiteParser>();
-                //parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
-                //parsers.Add(new ComingSoonNetSiteParser("http://www.commingsoon.net/dvd", targetDate, "ComingSoon.net"));
+                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
+                parsers.Add(new ComingSoonNetSiteParser("http://www.commingsoon.net/dvd", targetDate, "ComingSoon.net"));
                 parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate, "Movies.com"));
                 //parsers.Add(new BlockbusterSiteParser("http://www.blockbuster.com/rss/newRelease", targetDate, "Blockbuster"));
 
