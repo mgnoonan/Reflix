@@ -33,6 +33,7 @@ namespace Reflix.Worker.CustomSiteParsers
             // Add any RSS entries
             foreach (var post in posts)
             {
+                Console.WriteLine("-----");
                 Console.WriteLine("Parsing '{0}'", post.Title);
                 //if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
                 //{

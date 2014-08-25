@@ -68,6 +68,7 @@ namespace Reflix.Worker.CustomSiteParsers
                 if (titleNode == null)
                     continue;
 
+                Console.WriteLine("-----");
                 Console.WriteLine("Parsing '{0}'", titleNode.InnerText);
                 string href = titleNode.Attributes["href"].Value.Trim();
                 string id = ParseID(href);
@@ -160,28 +161,35 @@ namespace Reflix.Worker.CustomSiteParsers
                     title.Rating = rating.Trim().ToUpper();
                 }
             }
-
-            // Director(s)
-            string[] directorNodes = dict["Director"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            foreach (string directorNode in directorNodes)
-            {
-                string url = string.Empty;
-                title.Directors.Add(new MoviePerson { Id = -1, Name = directorNode.Trim(), Url = url });
-            }
+            Console.WriteLine("Rating: {0}", title.Rating);
 
             // Cast
             string[] castNodes = dict["Starring"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             foreach (string castNode in castNodes)
             {
                 string url = string.Empty;
+                string name = castNode.Trim();
                 title.Cast.Add(new MoviePerson { Id = -1, Name = castNode.Trim(), Url = url });
+                Console.WriteLine("Cast: {0}", name);
+            }
+
+            // Director(s)
+            string[] directorNodes = dict["Director"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (string directorNode in directorNodes)
+            {
+                string url = string.Empty;
+                string name = directorNode.Trim();
+                title.Directors.Add(new MoviePerson { Id = -1, Name = directorNode.Trim(), Url = url });
+                Console.WriteLine("Director: {0}", name);
             }
 
             // Genres
             string[] genreNodes = dict["Genre"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             foreach (string genreNode in genreNodes)
             {
-                title.Genres.Add(genreNode.Trim());
+                string name = genreNode.Trim();
+                title.Genres.Add(name);
+                Console.WriteLine("Genre: {0}", name);
             }
 
             // Synopsis
@@ -189,9 +197,10 @@ namespace Reflix.Worker.CustomSiteParsers
             title.Synopsis = synopsis.Trim();
 
             // Boxart
-            //*[@id="subPageContent"]/div/a/img
-            var boxartNode = document.DocumentNode.SelectSingleNode("//*[@id='subPageContent']/div/a/img");
-            title.BoxArt = boxartNode == null ? string.Empty : boxartNode.Attributes["src"].Value;
+            //html/head/meta[7]
+            var boxartNode = document.DocumentNode.SelectSingleNode("/html/head/meta[@property=\"og:image\"]");
+            title.BoxArt = boxartNode == null ? string.Empty : boxartNode.Attributes["content"].Value;
+            Console.WriteLine("BoxArt: {0}", title.BoxArt);
 
             return title;
         }
@@ -216,6 +225,7 @@ namespace Reflix.Worker.CustomSiteParsers
             // Release date
             string releaseDate = dict.ContainsKey("DVD Release Date") ? dict["DVD Release Date"] : DateTime.Now.Year.ToString();
             title.ReleaseYear = Convert.ToInt32(releaseDate.Substring(releaseDate.IndexOf(",") + 1));
+            Console.WriteLine("Release Year: {0}", title.ReleaseYear);
 
             // Rating
             string rating = dict.ContainsKey("Rated") ? dict["Rated"] : "NR";
@@ -228,21 +238,12 @@ namespace Reflix.Worker.CustomSiteParsers
                 rating = rating.IndexOf("(") == -1 ? rating : rating.Substring(0, rating.IndexOf("(")).Trim().ToUpper();
             }
             title.Rating = rating;
+            Console.WriteLine("Rating: {0}", rating);
 
             // Running time
             string runtime = dict.ContainsKey("Run Time") ? dict["Run Time"] : "0";
             title.Runtime = ConvertRunningTime(runtime);
-
-            // Director(s)
-            if (dict.ContainsKey("Directors"))
-            {
-                string[] directorNodes = dict["Directors"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                foreach (string directorNode in directorNodes)
-                {
-                    string url = string.Empty;
-                    title.Directors.Add(new MoviePerson { Id = -1, Name = directorNode.Trim(), Url = url });
-                }
-            }
+            Console.WriteLine("Running time: {0}", title.Runtime);
 
             // Cast
             if (dict.ContainsKey("Actors"))
@@ -251,7 +252,22 @@ namespace Reflix.Worker.CustomSiteParsers
                 foreach (string castNode in castNodes)
                 {
                     string url = string.Empty;
-                    title.Cast.Add(new MoviePerson { Id = -1, Name = castNode.Trim(), Url = url });
+                    string name = castNode.Trim();
+                    title.Cast.Add(new MoviePerson { Id = -1, Name = name, Url = url });
+                    Console.WriteLine("Cast: {0}", name);
+                }
+            }
+
+            // Director(s)
+            if (dict.ContainsKey("Directors"))
+            {
+                string[] directorNodes = dict["Directors"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                foreach (string directorNode in directorNodes)
+                {
+                    string url = string.Empty;
+                    string name = directorNode.Trim();
+                    title.Directors.Add(new MoviePerson { Id = -1, Name = name, Url = url });
+                    Console.WriteLine("Director: {0}", name);
                 }
             }
 
@@ -265,8 +281,10 @@ namespace Reflix.Worker.CustomSiteParsers
 
             // BoxArt
             //*[@id="holderMainImage"]/noscript
-            var boxartNode = document.DocumentNode.SelectSingleNode("//*[@id='holderMainImage']/noscript");
-            title.BoxArt = (boxartNode == null ? string.Empty : ParseBoxArtHtml(boxartNode.InnerHtml));
+            //*[@id="landingImage"]
+            var boxartNode = document.DocumentNode.SelectSingleNode("//*[@id='landingImage']");
+            title.BoxArt = (boxartNode == null ? string.Empty : boxartNode.Attributes["src"].Value.Trim());
+            Console.WriteLine("BoxArt: {0}", title.BoxArt);
 
             return title;
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Reflix.Worker.CustomSiteParsers
 {
@@ -49,55 +50,108 @@ namespace Reflix.Worker.CustomSiteParsers
             var document = new HtmlDocument();
             document.LoadHtml(html);
 
+            ParseMetaData(title, document);
+            ParseCast(title, document, "//*[@id=\"mdp-details\"]/div[1]/div[1]/dl/dd/a", "Cast", title.Cast);
+            ParseCast(title, document, "//*[@id=\"mdp-details\"]/div[1]/div[2]/dl/dd/a", "Director", title.Directors);
+            ParseGenre(title, document, "//*[@id=\"mdp-details\"]/div[1]/div[3]/dl/dd/a", "Genre", title.Genres);
+
+            return title;
+        }
+
+        private void ParseGenre(MovieTitle title, HtmlDocument document, string xpath, string castType, List<string> list)
+        {
+            try
+            {
+                var nodes = document.DocumentNode.SelectNodes(xpath);
+                if (nodes == null)
+                {
+                    Console.WriteLine("No valid {0} nodes found", castType);
+                    return;
+                }
+
+                foreach (var node in nodes)
+                {
+                    string name = HttpUtility.HtmlDecode(node.InnerText.Replace("Genre:", string.Empty).Trim());
+                    Console.WriteLine("Genre: {0}", name);
+                    title.Genres.Add(name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void ParseCast(MovieTitle title, HtmlDocument document, string xpath, string castType, List<MoviePerson> list)
+        {
+            try
+            {
+                //*[@id="support"]/div[1]/a
+                //*[@id="mdp-details"]/div[1]/div[1]/dl/dd/a
+                var nodes = document.DocumentNode.SelectNodes(xpath);
+                if (nodes == null)
+                {
+                    Console.WriteLine("No valid {0} nodes found", castType);
+                    return;
+                }
+
+                foreach (var node in nodes)
+                {
+                    string url = node.Attributes["href"].Value.Trim();
+                    int id = ParseIdFromUrl(url);
+                    string name = HttpUtility.HtmlDecode(node.InnerText.Trim());
+                    Console.WriteLine("{0}: {1}", castType, name);
+                    list.Add(new MoviePerson { Id = id, Name = name, Url = url });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private int ParseIdFromUrl(string url)
+        {
+            int startIndex = url.LastIndexOf('/') + 1;
+            int length = url.LastIndexOf('?') - startIndex;
+
+            string parsedID = length < 0 ? url.Substring(startIndex) : url.Substring(startIndex, length);
+
+            int id = 0;
+            if (int.TryParse(parsedID, out id))
+            {
+                return id;
+            }
+
+            return 0;
+        }
+
+        private void ParseMetaData(MovieTitle title, HtmlDocument document)
+        {
             //*[@id="nmmdp"]/table/tr/td/div/div[1]/span
-            var nodes = document.DocumentNode.SelectNodes("//*[@id='nmmdp']/table/tr/td/div/div[1]/span");
-            title.ReleaseYear = Convert.ToInt32(nodes[0].InnerText);
-            title.Rating = nodes[1] == null ? "N/A" : nodes[1].InnerText;
+            //*[@id="mdp-metadata-container"]/span
+            var nodes = document.DocumentNode.SelectNodes("//*[@id=\"mdp-metadata-container\"]/span");
+
+            int releaseYear = 0;
+            if (int.TryParse(nodes[0].InnerText, out releaseYear))
+            {
+                title.ReleaseYear = releaseYear;
+            }
+            else
+            {
+                title.ReleaseYear = DateTime.Now.Year;
+            }
+            Console.WriteLine("Release Year: {0}", title.ReleaseYear);
+
+            title.Rating = nodes[1] == null ? "N/A" : nodes[1].InnerText.Trim();
+            Console.WriteLine("Rating: {0}", title.Rating);
 
             if (nodes.Count >= 3)
             {
                 string runtime = nodes[2] == null ? "0 " : nodes[2].InnerText;
                 title.Runtime = Convert.ToInt32(runtime.Substring(0, runtime.IndexOf(' ')).Trim());
             }
-
-            try
-            {
-                //*[@id="support"]/div[1]/a
-                nodes = document.DocumentNode.SelectNodes("//*[@id='support']/div[1]/a");
-                foreach (var node in nodes)
-                {
-                    string url = node.Attributes["href"].Value.Trim();
-                    string parsedID = url.Substring(url.LastIndexOf('/') + 1);
-                    title.Cast.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim(), Url = url });
-                }
-            }
-            catch { }
-
-            try
-            {
-                //*[@id="support"]/div[2]/a
-                nodes = document.DocumentNode.SelectNodes("//*[@id='support']/div[2]/a");
-                foreach (var node in nodes)
-                {
-                    string url = node.Attributes["href"].Value.Trim();
-                    string parsedID = url.Substring(url.LastIndexOf('/') + 1);
-                    title.Directors.Add(new MoviePerson { Id = Convert.ToInt32(parsedID), Name = node.InnerText.Trim(), Url = url });
-                }
-            }
-            catch { }
-
-            try
-            {
-                //*[@id="support"]/div[3]/a
-                nodes = document.DocumentNode.SelectNodes("//*[@id='support']/div[3]");
-                foreach (var node in nodes)
-                {
-                    title.Genres.Add(node.InnerText.Replace("Genre:", string.Empty).Trim());
-                }
-            }
-            catch { }
-
-            return title;
+            Console.WriteLine("Runtime: {0}", title.Runtime);
         }
     }
 }

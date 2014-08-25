@@ -72,9 +72,18 @@ namespace Reflix.Worker.CustomSiteParsers
 
         public MovieTitle ParseRssItem(MovieTitle title)
         {
-            string html = Utils.GetHttpWebResponse(title.Url, null, new System.Net.CookieContainer());
             var document = new HtmlDocument();
-            document.LoadHtml(html);
+
+            try
+            {
+                string html = Utils.GetHttpWebResponse(title.Url, null, new System.Net.CookieContainer());
+                document.LoadHtml(html);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
 
             //try
             //{
