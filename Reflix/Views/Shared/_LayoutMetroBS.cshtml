@@ -26,7 +26,7 @@ string action = ViewContext.RouteData.Values["Action"].ToString().ToLowerInvaria
         <div class="navbar-inner">
             <div class="container">
                 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a>
-                @Html.ActionLink("reflix", "Index", "Home", new { @class = "brand" })
+                @Html.ActionLink("reflix", "Index", "Home", null, new { @class = "brand" })
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <li class="@(action == "index" ? "active" : "")">@Html.ActionLink("Home", "Index", "Home")</li>
