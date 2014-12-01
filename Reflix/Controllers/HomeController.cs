@@ -28,7 +28,7 @@ namespace Reflix.Controllers
                 ViewBag.EndDate = calculatedEndDate;
                 ViewBag.DisplayAll = false;
 
-                return View("IndexMBS", modelList.OrderBy(t => t.Title.Name).ToList());
+                return View("Index", modelList.OrderBy(t => t.Title.Name).ToList());
             }
             catch (Exception ex)
             {
@@ -48,20 +48,13 @@ namespace Reflix.Controllers
                 ViewBag.EndDate = DateTime.MaxValue;
                 ViewBag.DisplayAll = true;
 
-                return View("IndexMBS", modelList.OrderBy(t => t.Title.Name).ToList());
+                return View("Index", modelList.OrderBy(t => t.Title.Name).ToList());
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.TraceError(ex.Message);
                 throw;
             }
-        }
-
-        public ActionResult Delete(string id)
-        {
-            DeleteRssTitle(id.Replace("_", ":"));
-
-            return RedirectToAction("Index");
         }
 
         public ActionResult About()

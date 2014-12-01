@@ -27,21 +27,8 @@ namespace Reflix
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            AuthConfig.RegisterAuth();
 
-            //int maxErrorCount = 3;
-            //while (maxErrorCount-- > 0)
-            //{
-            //    if (InitializeRavenDB("~/App_Data", maxErrorCount > 0))
-            //    {
-            //        break;
-            //    }
-
-            //    System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
-            //}
             InitializeRavenDB("~/App_Data", true);
-
-            //IndexCreation.CreateIndexes(Assembly.GetCallingAssembly(), Store);
         }
 
         private static bool InitializeRavenDB(string dataDirectory, bool rethrowException)
