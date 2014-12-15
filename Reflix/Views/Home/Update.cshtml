@@ -1,0 +1,73 @@
+﻿@model Reflix.Models.MovieTitle
+
+@{
+    ViewBag.Title = "Update";
+}
+
+<h2>Update</h2>
+
+<div>
+    <h4>MovieTitle</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Url)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Url)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Synopsis)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Synopsis)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BoxArt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BoxArt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReleaseYear)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReleaseYear)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rating)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rating)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Runtime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Runtime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index", new { startDate = ViewBag.StartDate.ToString() })
+</p>

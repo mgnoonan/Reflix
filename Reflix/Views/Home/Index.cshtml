@@ -54,12 +54,12 @@
                                 <a href="@actor.Url" target="_blank">@actor.Name</a><span>,</span>
                             }
                         }
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 100px; text-align: right;"><strong>Director:</strong></td>
-                <td>
-                    @foreach (var director in m.Title.Directors)
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 100px; text-align: right;"><strong>Director:</strong></td>
+                    <td>
+                        @foreach (var director in m.Title.Directors)
                     {
                         if (string.IsNullOrWhiteSpace(director.Url))
                         {
@@ -70,29 +70,28 @@
                             <a href="@director.Url" target="_blank">@director.Name</a>
                         }
                     }
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 100px; text-align: right;"><strong>Genre:</strong></td>
-            <td>@string.Join(", ", m.Title.Genres.ToArray())</td>
-        </tr>
-    </table>
-    <div class="row">
-        <div class="col-md-10">
-            <blockquote>@m.Title.Synopsis.RemoveMarkup()</blockquote>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 100px; text-align: right;"><strong>Genre:</strong></td>
+                    <td>@string.Join(", ", m.Title.Genres.ToArray())</td>
+                </tr>
+            </table>
+            <div class="row">
+                <div class="col-md-10">
+                    <blockquote>@m.Title.Synopsis.RemoveMarkup()</blockquote>
+                </div>
+            </div>
+            @if (m.Title.Id.Contains(":"))
+            {
+                <a class="btn btn-primary" href="@("http://dvd.netflix.com/Search?v1=" + m.Title.Name.Replace(" ", "+"))" target="_blank">Search Netflix</a>
+                <a class="btn btn-warning" href="@m.Title.Url" target="_blank">Open in @m.Source</a>
+            }
+            else
+            {
+                <a class="btn btn-primary" href="@m.Title.Url.Replace("www.", "dvd.")" target="_blank">Open in Netflix</a>
+            }
+            <div class="page-header"></div>
         </div>
     </div>
-    @if (m.Title.Id.Contains(":"))
-    {
-        <a class="btn btn-primary" href="@("http://dvd.netflix.com/Search?v1=" + m.Title.Name.Replace(" ", "+"))" target="_blank">Search Netflix</a>
-        <a class="btn btn-warning" href="@m.Title.Url" target="_blank">Open in @m.Source</a>
-                <!-- @Html.ActionLink("Delete", "Delete", new { id = m.Title.Id.Replace(":", "_") }) -->
-        }
-        else
-        {
-        <a class="btn btn-primary" href="@m.Title.Url.Replace("www.", "dvd.")" target="_blank"> in Netflix</a>
-            }
-    <div class="page-header"></div>
-</div>
-</div>
 }

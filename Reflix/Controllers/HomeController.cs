@@ -57,6 +57,17 @@ namespace Reflix.Controllers
             }
         }
 
+        public ActionResult Update(string id)
+        {
+            id = id.Replace("_", ":");
+
+            var model = GetRssTitleFromEmbeddedStore(id);
+
+            ViewBag.StartDate = model.RssWeekOf.ToString("yyyy-MM-dd");
+
+            return View(model.Title);
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Data sources:";
@@ -69,6 +80,15 @@ namespace Reflix.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        private TitleViewModel GetRssTitleFromEmbeddedStore(string id)
+        {
+            var query = from title in this.RavenSession.Query<TitleViewModel>()
+                        where title.Title.Id == id
+                        select title;
+
+            return query.FirstOrDefault();
         }
 
         private List<TitleViewModel> GetRssTitlesFromEmbeddedStore(DateTime newStartDate, DateTime newEndDate)
