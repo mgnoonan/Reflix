@@ -1,0 +1,83 @@
+﻿@model Reflix.Models.MovieTitle
+
+@{
+    ViewBag.Title = "Details";
+
+    string startDate = ViewBag.StartDate;
+}
+
+<h2>Details</h2>
+
+<div class="row">
+    <div class="col-md-2">
+        <h4>@Model.Name</h4>
+        <img src="@Model.BoxArt" />
+    </div>
+    <div class="col-md-9">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReleaseYear)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReleaseYear)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Rating)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Rating)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Runtime)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Runtime) minutes
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Synopsis)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Synopsis)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Url)
+            </dt>
+
+            <dd>
+                <a href="@Model.Url" target="_blank">@Model.Url</a>
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BoxArt)
+            </dt>
+
+            <dd>
+                <a href="@Model.BoxArt" target="_blank">@Model.BoxArt</a>
+            </dd>
+
+        </dl>
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+<hr />
+<p>
+    @*Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |*@
+    @Html.ActionLink("Back to List", "Index", new { startDate = startDate })
+</p>

@@ -91,6 +91,7 @@
             {
                 <a class="btn btn-primary" href="@m.Title.Url.Replace("www.", "dvd.")" target="_blank">Open in Netflix</a>
             }
+            @Html.ActionLink("Details", "Details", new { id = m.Title.Id.Replace(":", "_") }, new { @class = "btn btn-default" })
             <div class="page-header"></div>
         </div>
     </div>

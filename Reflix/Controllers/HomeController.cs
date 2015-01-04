@@ -57,6 +57,22 @@ namespace Reflix.Controllers
             }
         }
 
+        public ActionResult Details(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return RedirectToAction("Index");
+            }
+
+            id = id.Replace("_", ":");
+
+            var model = GetRssTitleFromEmbeddedStore(id);
+
+            ViewBag.StartDate = model.RssWeekOf.ToString("yyyy-MM-dd");
+
+            return View(model.Title);
+        }
+
         public ActionResult Update(string id)
         {
             id = id.Replace("_", ":");
