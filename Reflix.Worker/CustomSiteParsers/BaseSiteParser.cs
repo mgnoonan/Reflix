@@ -132,6 +132,14 @@ namespace Reflix.Worker.CustomSiteParsers
             //*[@id="mdp-metadata-container"]/span
             var nodes = document.DocumentNode.SelectNodes("//*[@id=\"mdp-metadata-container\"]/span");
 
+            if (nodes == null)
+            {
+                title.ReleaseYear = DateTime.Now.Year;
+                title.Rating = "N/A";
+                title.Runtime = 0;
+                return;
+            }
+
             int releaseYear = 0;
             if (int.TryParse(nodes[0].InnerText, out releaseYear))
             {
@@ -148,7 +156,7 @@ namespace Reflix.Worker.CustomSiteParsers
 
             if (nodes.Count >= 3)
             {
-                string runtime = nodes[2] == null ? "0 " : nodes[2].InnerText;
+                string runtime = nodes[2] == null || string.IsNullOrWhiteSpace(nodes[2].InnerText) ? "0 " : nodes[2].InnerText;
                 title.Runtime = Convert.ToInt32(runtime.Substring(0, runtime.IndexOf(' ')).Trim());
             }
             Console.WriteLine("Runtime: {0}", title.Runtime);
