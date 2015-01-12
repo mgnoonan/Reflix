@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Reflix.Models;
-using Reflix.Worker.CustomSiteParsers;
+using Reflix.SiteParsing;
 using Reflix.Worker.Utility;
 using RestSharp;
 using System;

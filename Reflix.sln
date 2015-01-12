@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix", "Reflix\Reflix.csproj", "{54F0966D-F431-4F55-9153-8406E01CE362}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Worker", "Reflix.Worker\Reflix.Worker.csproj", "{CC36482C-91D1-4515-B3A7-85E7CE5EB356}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Models", "Reflix.Models\Reflix.Models.csproj", "{391C8C93-0B06-43CC-9DDD-8927772957D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.SiteParsing", "Reflix.SiteParsing\Reflix.SiteParsing.csproj", "{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,10 @@ Global
 		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{391C8C93-0B06-43CC-9DDD-8927772957D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

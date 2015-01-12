@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reflix.Worker.CustomSiteParsers
+namespace Reflix.SiteParsing
 {
-    interface ICustomSiteParser
+    public interface ICustomSiteParser
     {
         string Name { get; }
         List<TitleViewModel> ParseRssList();

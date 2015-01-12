@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Reflix.Models;
-using Reflix.Worker.Utility;
+using Reflix.SiteParsing.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Reflix.Worker.CustomSiteParsers
+namespace Reflix.SiteParsing
 {
     public class BaseSiteParser
     {

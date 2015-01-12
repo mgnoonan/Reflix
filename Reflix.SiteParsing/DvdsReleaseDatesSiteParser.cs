@@ -1,15 +1,15 @@
 ﻿using HtmlAgilityPack;
 using Reflix.Models;
-using Reflix.Worker.Utility;
+using Reflix.SiteParsing.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reflix.Worker.CustomSiteParsers
+namespace Reflix.SiteParsing
 {
-    class DvdsReleaseDatesSiteParser : BaseSiteParser, ICustomSiteParser
+    public class DvdsReleaseDatesSiteParser : BaseSiteParser, ICustomSiteParser
     {
         public DvdsReleaseDatesSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
 

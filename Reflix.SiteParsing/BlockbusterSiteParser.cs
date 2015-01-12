@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Reflix.Models;
-using Reflix.Worker.Utility;
+using Reflix.SiteParsing.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Reflix.Worker.CustomSiteParsers
+namespace Reflix.SiteParsing
 {
-    class BlockbusterSiteParser : BaseSiteParser, ICustomSiteParser
+    public class BlockbusterSiteParser : BaseSiteParser, ICustomSiteParser
     {
         public BlockbusterSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
 
