@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "NgIndex";
+}
+<div ng-app>
+    <div ng-controller="indexController">
+        <ul>
+            <li ng-repeat="item in tweets">
+                {{item.screenName}}, {{item.tweetText}}
+            </li>
+        </ul>
+    </div>
+</div>
+@section scripts {
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/angular-resource.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/Scripts/_index.js"></script>
+}

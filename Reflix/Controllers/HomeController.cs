@@ -37,6 +37,11 @@ namespace Reflix.Controllers
             }
         }
 
+        public ActionResult NgIndex()
+        {
+            return View();
+        }
+
         public ActionResult ListAll()
         {
             try
