@@ -30,7 +30,7 @@
             <img src="@m.Title.BoxArt" alt="@m.Title.Name" style="margin-top:15px; width: 110px; height: 150px;" />
         </div>
         <div class="col-md-10">
-            <h2>@Html.ActionLink(m.Title.Name, "Details", new { id = m.Title.Id.Replace(":", "_") }) <!--small>@m.Title.Id / @m.RssWeekOf.ToString("dd-MMM-yyyy")</small--></h2>
+            <h2>m.Title.Name <small>@Html.ActionLink("Details", "Details", new { id = m.Title.Id.Replace(":", "_") })</small> <!--small>@m.Title.Id / @m.RssWeekOf.ToString("dd-MMM-yyyy")</small--></h2>
             <div class="row">
                 <div class="col-md-10">
                     <span style="padding: 5px 10px 5px 10px;">@m.Title.ReleaseYear</span>
