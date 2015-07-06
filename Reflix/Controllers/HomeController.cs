@@ -21,7 +21,7 @@ namespace Reflix.Controllers
 
                 var calculatedEndDate = calculatedStartDate.AddDays(6);
 
-                var modelList = GetRssTitlesFromEmbeddedStore(calculatedStartDate, calculatedEndDate);
+                var modelList = GetRssTitlesFromEmbeddedStore(calculatedStartDate, calculatedEndDate); 
 
                 ViewBag.Message = string.Format("Week of {0}", calculatedStartDate.ToString("d-MMM-yyyy"));
                 ViewBag.StartDate = calculatedStartDate;
@@ -98,7 +98,7 @@ namespace Reflix.Controllers
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Your useless contact page.";
 
             return View();
         }
