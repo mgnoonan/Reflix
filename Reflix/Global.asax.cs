@@ -17,7 +17,7 @@ namespace Reflix
 
     public class MvcApplication : System.Web.HttpApplication
     {
-        public static DocumentStore _store;
+        public static EmbeddableDocumentStore _store;
 
         protected void Application_Start()
         {

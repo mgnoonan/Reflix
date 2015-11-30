@@ -195,3 +195,4 @@ ModelManifest.xml
 # MGN ignore the App_Data folder
 **/App_Data
 **/Raven
+**/CompiledIndexCache
