@@ -156,8 +156,17 @@ namespace Reflix.SiteParsing
 
             if (nodes.Count >= 3)
             {
-                string runtime = nodes[2] == null || string.IsNullOrWhiteSpace(nodes[2].InnerText) ? "0 " : nodes[2].InnerText;
-                title.Runtime = Convert.ToInt32(runtime.Substring(0, runtime.IndexOf(' ')).Trim());
+                string runtimeText = nodes[2] == null || string.IsNullOrWhiteSpace(nodes[2].InnerText) ? "0 " : nodes[2].InnerText;
+                runtimeText = runtimeText.Substring(0, runtimeText.IndexOf(' '));
+                int runtime = 0;
+                if (int.TryParse(runtimeText, out runtime))
+                {
+                    title.Runtime = runtime;
+                }
+                else
+                {
+                    title.Runtime = 0;
+                }
             }
             Console.WriteLine("Runtime: {0}", title.Runtime);
         }
