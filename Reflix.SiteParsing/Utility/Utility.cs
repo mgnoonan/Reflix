@@ -78,7 +78,7 @@ namespace Reflix.SiteParsing.Utility
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
             }
 

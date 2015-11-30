@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using Reflix.Models;
 using Reflix.SiteParsing;
 using Reflix.Worker.Utility;
@@ -14,55 +15,41 @@ namespace Reflix.Worker
 {
     class Program
     {
-        private static Log logfile = new Log();
+        /// <summary>
+        /// Instance of the log4net logger
+        /// </summary>
+        private static readonly ILog log = LogManager.GetLogger(typeof(Program));
 
         static void Main(string[] args)
         {
-            // Print banner to console
-            Console.WriteLine("\nReflix.Worker");
-            Console.WriteLine("------------\n");
+            // Init the log4net through the confi
+            log4net.Config.XmlConfigurator.Configure();
+            log.Info("--------------------------------");
 
             try
             {
-                // Open the logfile
-                logfile.Open("Reflix.Worker.log");
-                logfile.ConsoleOutput = true;
-                logfile.WriteLine("Reflix.Worker starting");
+                log.Info("Starting");
 
                 DateTime targetDate = Utils.CalculateStartDate();
                 //DateTime targetDate = new DateTime(2014, 5, 4);
 
                 // Add the current supported parsers (they come and go)
                 var parsers = new List<ICustomSiteParser>();
-                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix"));
-                parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate, "Movies.com"));
-                //parsers.Add(new DvdsReleaseDatesSiteParser("http://www.dvdsreleasedates.com/", targetDate, "dvdsreleasedates.com"));
+                parsers.Add(new NetflixSiteParser("http://rss.netflix.com/NewReleasesRSS", targetDate, "Netflix", log));
+                parsers.Add(new MoviesDotComSiteParser("http://www.movies.com/rss-feeds/new-on-dvd-rss", targetDate, "Movies.com", log));
 
                 // Deprecated
+                //parsers.Add(new DvdsReleaseDatesSiteParser("http://www.dvdsreleasedates.com/", targetDate, "dvdsreleasedates.com"));
                 //parsers.Add(new ComingSoonNetSiteParser("http://www.commingsoon.net/dvd", targetDate, "ComingSoon.net"));
                 //parsers.Add(new BlockbusterSiteParser("http://www.blockbuster.com/rss/newRelease", targetDate, "Blockbuster"));
 
                 AddNewTitles(targetDate, parsers);
+                log.Info("Completed successfully");
             }
-            //catch (DbEntityValidationException dbEx)
-            //{
-            //    foreach (var validationErrors in dbEx.EntityValidationErrors)
-            //    {
-            //        foreach (var validationError in validationErrors.ValidationErrors)
-            //        {
-            //            logfile.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-            //        }
-            //    }
-            //}
             catch (Exception ex)
             {
-                logfile.WriteLine(ex.Message + ex.StackTrace);
+                log.Error("Unexpected error", ex);
                 throw;
-            }
-            finally
-            {
-                // Clean up log and screen display
-                logfile.Close();
             }
 
 #if DEBUG
@@ -77,25 +64,25 @@ namespace Reflix.Worker
         {
             foreach (var title in titles)
             {
-                Console.WriteLine("{0} [{1}]: {2}", title.RssWeekNumber, title.Title.Id, title.Title.Name);
+                log.InfoFormat("{0} [{1}]: {2}", title.RssWeekNumber, title.Title.Id, title.Title.Name);
             }
         }
 
         private static void AddNewTitles(DateTime targetDate, List<ICustomSiteParser> parsers)
         {
-            Console.WriteLine("Retrieving existing titles for {0:yyyy-MM-dd}", targetDate);
+            log.InfoFormat("Retrieving existing titles for {0:yyyy-MM-dd}", targetDate);
             var existingTitles = GetExistingTitles(targetDate);
             PrintTitles(existingTitles);
 
             var newTitles = new List<TitleViewModel>();
             foreach (var parser in parsers)
             {
-                Console.WriteLine("\nRetrieving new titles for {0}", parser.Name);
+                log.InfoFormat("Retrieving new titles for {0}", parser.Name);
                 var list = parser.ParseRssList();
                 newTitles.AddRange(list.AsEnumerable());
             }
 
-            Console.WriteLine("\nSaving new titles");
+            log.Info("Saving new titles");
             foreach (var title in newTitles)
             {
                 if (existingTitles.Any(e => e.Title.Id == title.Title.Id) ||
@@ -111,16 +98,25 @@ namespace Reflix.Worker
                 request.RequestFormat = DataFormat.Json;
                 request.AddBody(title);
 
-                Console.WriteLine("Posting new title '{0}'", title.Title.Name);
-                var response = client.Post<TitleViewModel>(request);
+                try
+                {
+                    log.InfoFormat("Posting new title '{0}'", title.Title.Name);
+                    var response = client.Post<TitleViewModel>(request);
 
-                if (response.StatusCode == HttpStatusCode.Created)
-                {
-                    existingTitles.Add(title);
+                    if (response.StatusCode == HttpStatusCode.Created)
+                    {
+                        existingTitles.Add(title);
+                    }
+                    else
+                    {
+                        log.WarnFormat("Response code '{0}' does not indicate success", response.StatusCode);
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    throw new Exception(string.Format("Error {0}", response.StatusCode));
+                    // Think we should bail if we get an error here
+                    log.Error("Error retrieving title from service", ex);
+                    throw;
                 }
             }
         }

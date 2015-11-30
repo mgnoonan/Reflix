@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using log4net;
 using Reflix.Models;
 using Reflix.SiteParsing.Utility;
 using System;
@@ -12,7 +13,7 @@ namespace Reflix.SiteParsing
 {
     public class BlockbusterSiteParser : BaseSiteParser, ICustomSiteParser
     {
-        public BlockbusterSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
+        public BlockbusterSiteParser(string url, DateTime startDate, string name, ILog log) : base(url, startDate, name, log) { }
 
         public string Name { get { return base._sourceName; } }
 
