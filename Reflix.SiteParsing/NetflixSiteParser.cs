@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using log4net;
 using Reflix.Models;
 using Reflix.SiteParsing.Utility;
 using System;
@@ -13,7 +14,7 @@ namespace Reflix.SiteParsing
 {
     public class NetflixSiteParser : BaseSiteParser, ICustomSiteParser
     {
-        public NetflixSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
+        public NetflixSiteParser(string url, DateTime startDate, string name, ILog log) : base(url, startDate, name, log) { }
 
         public string Name { get { return base._sourceName; } }
 
@@ -21,7 +22,7 @@ namespace Reflix.SiteParsing
         {
             var originalTitles = new List<TitleViewModel>();
             var rssDoc = XDocument.Load(base._sourceUrl);
-            //Console.WriteLine(rssDoc.Element("rss").Element("channel").Element("title").Value);
+            //_log.InfoFormat(rssDoc.Element("rss").Element("channel").Element("title").Value);
 
             // Query the <item>s in the XML RSS data and select each one into a new Post()
             IEnumerable<Post> posts =
@@ -33,8 +34,8 @@ namespace Reflix.SiteParsing
             // Add any RSS entries
             foreach (var post in posts)
             {
-                Console.WriteLine("-----");
-                Console.WriteLine("Parsing '{0}'", post.Title);
+                _log.Info("-----");
+                _log.InfoFormat("Parsing '{0}'", post.Title);
                 //if (originalTitles.Count(t => t.Title.Name.Equals(post.Title)) == 0)
                 //{
                 var feedTitle = new MovieTitle

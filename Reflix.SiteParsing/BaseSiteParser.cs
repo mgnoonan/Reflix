@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using log4net;
 using Reflix.Models;
 using Reflix.SiteParsing.Utility;
 using System;
@@ -15,12 +16,14 @@ namespace Reflix.SiteParsing
         protected string _sourceUrl;
         protected DateTime _sundayWeekOfDate;
         protected string _sourceName;
+        protected ILog _log;
 
-        public BaseSiteParser(string url, DateTime startDate, string name)
+        public BaseSiteParser(string url, DateTime startDate, string name, ILog log)
         {
             _sourceUrl = url;
             _sundayWeekOfDate = startDate;
             _sourceName = name;
+            _log = log;
         }
 
         public MovieTitle SearchNetflixTitle(MovieTitle title)
@@ -65,20 +68,20 @@ namespace Reflix.SiteParsing
                 var nodes = document.DocumentNode.SelectNodes(xpath);
                 if (nodes == null)
                 {
-                    Console.WriteLine("No valid {0} nodes found", castType);
+                    _log.InfoFormat("No valid {0} nodes found", castType);
                     return;
                 }
 
                 foreach (var node in nodes)
                 {
                     string name = HttpUtility.HtmlDecode(node.InnerText.Replace("Genre:", string.Empty).Trim());
-                    Console.WriteLine("Genre: {0}", name);
+                    _log.InfoFormat("Genre: {0}", name);
                     title.Genres.Add(name);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _log.Error("ParseGenre", ex);
             }
         }
 
@@ -91,7 +94,7 @@ namespace Reflix.SiteParsing
                 var nodes = document.DocumentNode.SelectNodes(xpath);
                 if (nodes == null)
                 {
-                    Console.WriteLine("No valid {0} nodes found", castType);
+                    _log.InfoFormat("No valid {0} nodes found", castType);
                     return;
                 }
 
@@ -100,13 +103,13 @@ namespace Reflix.SiteParsing
                     string url = node.Attributes["href"].Value.Trim();
                     int id = ParseIdFromUrl(url);
                     string name = HttpUtility.HtmlDecode(node.InnerText.Trim());
-                    Console.WriteLine("{0}: {1}", castType, name);
+                    _log.InfoFormat("{0}: {1}", castType, name);
                     list.Add(new MoviePerson { Id = id, Name = name, Url = url });
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _log.Error("ParseCast", ex);
             }
         }
 
@@ -149,17 +152,26 @@ namespace Reflix.SiteParsing
             {
                 title.ReleaseYear = DateTime.Now.Year;
             }
-            Console.WriteLine("Release Year: {0}", title.ReleaseYear);
+            _log.InfoFormat("Release Year: {0}", title.ReleaseYear);
 
             title.Rating = nodes[1] == null ? "N/A" : nodes[1].InnerText.Trim();
-            Console.WriteLine("Rating: {0}", title.Rating);
+            _log.InfoFormat("Rating: {0}", title.Rating);
 
             if (nodes.Count >= 3)
             {
-                string runtime = nodes[2] == null || string.IsNullOrWhiteSpace(nodes[2].InnerText) ? "0 " : nodes[2].InnerText;
-                title.Runtime = Convert.ToInt32(runtime.Substring(0, runtime.IndexOf(' ')).Trim());
+                string runtimeText = nodes[2] == null || string.IsNullOrWhiteSpace(nodes[2].InnerText) ? "0 " : nodes[2].InnerText;
+                runtimeText = runtimeText.Substring(0, runtimeText.IndexOf(' '));
+                int runtime = 0;
+                if (int.TryParse(runtimeText, out runtime))
+                {
+                    title.Runtime = runtime;
+                }
+                else
+                {
+                    title.Runtime = 0;
+                }
             }
-            Console.WriteLine("Runtime: {0}", title.Runtime);
+            _log.InfoFormat("Runtime: {0}", title.Runtime);
         }
     }
 }

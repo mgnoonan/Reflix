@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using log4net;
 using Reflix.Models;
 using Reflix.SiteParsing.Utility;
 using System;
@@ -12,7 +13,7 @@ namespace Reflix.SiteParsing
 {
     public class ComingSoonNetSiteParser : BaseSiteParser, ICustomSiteParser
     {
-        public ComingSoonNetSiteParser(string url, DateTime startDate, string name) : base(url, startDate, name) { }
+        public ComingSoonNetSiteParser(string url, DateTime startDate, string name, ILog log) : base(url, startDate, name, log) { }
 
         public string Name { get { return base._sourceName; } }
 
@@ -68,8 +69,8 @@ namespace Reflix.SiteParsing
                 if (titleNode == null)
                     continue;
 
-                Console.WriteLine("-----");
-                Console.WriteLine("Parsing '{0}'", titleNode.InnerText);
+                _log.Info("-----");
+                _log.InfoFormat("Parsing '{0}'", titleNode.InnerText);
                 string href = titleNode.Attributes["href"].Value.Trim();
                 string id = ParseID(href);
                 var feedTitle = new MovieTitle
@@ -95,8 +96,7 @@ namespace Reflix.SiteParsing
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error parsing title '{0}'", feedTitle.Name);
-                    Console.WriteLine(ex.Message);
+                    _log.Error(string.Format("Error parsing title '{0}'", feedTitle.Name), ex);
                 }
             }
 
@@ -161,7 +161,7 @@ namespace Reflix.SiteParsing
                     title.Rating = rating.Trim().ToUpper();
                 }
             }
-            Console.WriteLine("Rating: {0}", title.Rating);
+            _log.InfoFormat("Rating: {0}", title.Rating);
 
             // Cast
             string[] castNodes = dict["Starring"].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -170,7 +170,7 @@ namespace Reflix.SiteParsing
                 string url = string.Empty;
                 string name = castNode.Trim();
                 title.Cast.Add(new MoviePerson { Id = -1, Name = castNode.Trim(), Url = url });
-                Console.WriteLine("Cast: {0}", name);
+                _log.InfoFormat("Cast: {0}", name);
             }
 
             // Director(s)
@@ -180,7 +180,7 @@ namespace Reflix.SiteParsing
                 string url = string.Empty;
                 string name = directorNode.Trim();
                 title.Directors.Add(new MoviePerson { Id = -1, Name = directorNode.Trim(), Url = url });
-                Console.WriteLine("Director: {0}", name);
+                _log.InfoFormat("Director: {0}", name);
             }
 
             // Genres
@@ -189,7 +189,7 @@ namespace Reflix.SiteParsing
             {
                 string name = genreNode.Trim();
                 title.Genres.Add(name);
-                Console.WriteLine("Genre: {0}", name);
+                _log.InfoFormat("Genre: {0}", name);
             }
 
             // Synopsis
@@ -200,7 +200,7 @@ namespace Reflix.SiteParsing
             //html/head/meta[7]
             var boxartNode = document.DocumentNode.SelectSingleNode("/html/head/meta[@property=\"og:image\"]");
             title.BoxArt = boxartNode == null ? string.Empty : boxartNode.Attributes["content"].Value;
-            Console.WriteLine("BoxArt: {0}", title.BoxArt);
+            _log.InfoFormat("BoxArt: {0}", title.BoxArt);
 
             return title;
         }
@@ -225,7 +225,7 @@ namespace Reflix.SiteParsing
             // Release date
             string releaseDate = dict.ContainsKey("DVD Release Date") ? dict["DVD Release Date"] : DateTime.Now.Year.ToString();
             title.ReleaseYear = Convert.ToInt32(releaseDate.Substring(releaseDate.IndexOf(",") + 1));
-            Console.WriteLine("Release Year: {0}", title.ReleaseYear);
+            _log.InfoFormat("Release Year: {0}", title.ReleaseYear);
 
             // Rating
             string rating = dict.ContainsKey("Rated") ? dict["Rated"] : "NR";
@@ -238,12 +238,12 @@ namespace Reflix.SiteParsing
                 rating = rating.IndexOf("(") == -1 ? rating : rating.Substring(0, rating.IndexOf("(")).Trim().ToUpper();
             }
             title.Rating = rating;
-            Console.WriteLine("Rating: {0}", rating);
+            _log.InfoFormat("Rating: {0}", rating);
 
             // Running time
             string runtime = dict.ContainsKey("Run Time") ? dict["Run Time"] : "0";
             title.Runtime = ConvertRunningTime(runtime);
-            Console.WriteLine("Running time: {0}", title.Runtime);
+            _log.InfoFormat("Running time: {0}", title.Runtime);
 
             // Cast
             if (dict.ContainsKey("Actors"))
@@ -254,7 +254,7 @@ namespace Reflix.SiteParsing
                     string url = string.Empty;
                     string name = castNode.Trim();
                     title.Cast.Add(new MoviePerson { Id = -1, Name = name, Url = url });
-                    Console.WriteLine("Cast: {0}", name);
+                    _log.InfoFormat("Cast: {0}", name);
                 }
             }
 
@@ -267,7 +267,7 @@ namespace Reflix.SiteParsing
                     string url = string.Empty;
                     string name = directorNode.Trim();
                     title.Directors.Add(new MoviePerson { Id = -1, Name = name, Url = url });
-                    Console.WriteLine("Director: {0}", name);
+                    _log.InfoFormat("Director: {0}", name);
                 }
             }
 
@@ -284,7 +284,7 @@ namespace Reflix.SiteParsing
             //*[@id="landingImage"]
             var boxartNode = document.DocumentNode.SelectSingleNode("//*[@id='landingImage']");
             title.BoxArt = (boxartNode == null ? string.Empty : boxartNode.Attributes["src"].Value.Trim());
-            Console.WriteLine("BoxArt: {0}", title.BoxArt);
+            _log.InfoFormat("BoxArt: {0}", title.BoxArt);
 
             return title;
         }
