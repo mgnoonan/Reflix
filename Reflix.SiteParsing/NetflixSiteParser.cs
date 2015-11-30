@@ -22,7 +22,7 @@ namespace Reflix.SiteParsing
         {
             var originalTitles = new List<TitleViewModel>();
             var rssDoc = XDocument.Load(base._sourceUrl);
-            //Console.WriteLine(rssDoc.Element("rss").Element("channel").Element("title").Value);
+            //_log.InfoFormat(rssDoc.Element("rss").Element("channel").Element("title").Value);
 
             // Query the <item>s in the XML RSS data and select each one into a new Post()
             IEnumerable<Post> posts =

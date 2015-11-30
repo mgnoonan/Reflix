@@ -21,7 +21,7 @@ namespace Reflix.SiteParsing
         {
             var originalTitles = new List<TitleViewModel>();
             var rssDoc = XDocument.Load(base._sourceUrl);
-            //Console.WriteLine(rssDoc.Element("rss").Element("channel").Element("title").Value);
+            //_log.InfoFormat(rssDoc.Element("rss").Element("channel").Element("title").Value);
 
             // Query the <item>s in the XML RSS data and select each one into a new Post()
             IEnumerable<Post> posts =
@@ -33,12 +33,12 @@ namespace Reflix.SiteParsing
             // Add any RSS entries
             foreach (var post in posts) //.Where(p => p.Date >= base._startDate && p.Date <= base._startDate.AddDays(6)))
             {
-                Console.WriteLine("Checking release date '{0}'", post.Title);
+                _log.InfoFormat("Checking release date '{0}'", post.Title);
                 var releaseDate = ParseReleaseDate(post);
                 if (releaseDate.Date <= base._sundayWeekOfDate.Date.AddDays(-7))
                     continue;
 
-                Console.WriteLine("Parsing '{0}'", post.Title);
+                _log.InfoFormat("Parsing '{0}'", post.Title);
                 var feedTitle = new MovieTitle
                 {
                     Id = "B:" + post.Url.Substring(post.Url.LastIndexOf('/') + 1),
