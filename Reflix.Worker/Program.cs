@@ -134,8 +134,8 @@ namespace Reflix.Worker
 
         private static DateTime CalculateStartDate()
         {
-            DateTime testDate = DateTime.Now.Date;
-            return testDate.AddDays(-(int)testDate.DayOfWeek);
+            DateTime d = DateTime.Now.Date;
+            return d.AddDays(-(int)d.DayOfWeek);
         }
     }
 }
