@@ -2,14 +2,11 @@
 using Newtonsoft.Json;
 using Reflix.Models;
 using Reflix.SiteParsing;
-using Reflix.Worker.Utility;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reflix.Worker
 {
@@ -19,6 +16,12 @@ namespace Reflix.Worker
         /// Instance of the log4net logger
         /// </summary>
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
+
+#if DEBUG
+        private const string API_URL = "http://localhost:4204/api";
+#else
+        private const string API_URL = "http://reflix.azurewebsites.net/api";
+#endif
 
         static void Main(string[] args)
         {
@@ -30,7 +33,7 @@ namespace Reflix.Worker
             {
                 log.Info("Starting");
 
-                DateTime targetDate = Utils.CalculateStartDate();
+                DateTime targetDate = CalculateStartDate();
                 //DateTime targetDate = new DateTime(2014, 5, 4);
 
                 // Add the current supported parsers (they come and go)
@@ -89,11 +92,7 @@ namespace Reflix.Worker
                     existingTitles.Any(e => e.Title.Name == title.Title.Name))
                     continue;
 
-#if DEBUG
-                var client = new RestClient("http://localhost:4204/api");
-#else
-                var client = new RestClient("http://reflix.azurewebsites.net/api");
-#endif
+                var client = new RestClient(API_URL);
                 var request = new RestRequest("Title", Method.POST);
                 request.RequestFormat = DataFormat.Json;
                 request.AddBody(title);
@@ -123,11 +122,7 @@ namespace Reflix.Worker
 
         private static List<TitleViewModel> GetExistingTitles(DateTime targetDate)
         {
-#if DEBUG
-            var client = new RestClient("http://localhost:4204/api");
-#else
-            var client = new RestClient("http://reflix.azurewebsites.net/api");
-#endif
+            var client = new RestClient(API_URL);
             var request = new RestRequest("Title", Method.GET);
             request.AddParameter("targetDate", targetDate.Date.ToString("yyyy-MM-dd"));
 
@@ -135,6 +130,12 @@ namespace Reflix.Worker
             string responseString = response.Content;
             var oldTitles = JsonConvert.DeserializeObject<List<TitleViewModel>>(responseString);
             return oldTitles;
+        }
+
+        private static DateTime CalculateStartDate()
+        {
+            DateTime testDate = DateTime.Now.Date;
+            return testDate.AddDays(-(int)testDate.DayOfWeek);
         }
     }
 }
