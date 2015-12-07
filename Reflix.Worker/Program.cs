@@ -65,6 +65,12 @@ namespace Reflix.Worker
 
         private static void PrintTitles(List<TitleViewModel> titles)
         {
+            if (titles == null)
+            {
+                log.Info("No existing titles found");
+                return;
+            }
+
             foreach (var title in titles)
             {
                 log.InfoFormat("{0} [{1}]: {2}", title.RssWeekNumber, title.Title.Id, title.Title.Name);
