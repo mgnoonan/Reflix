@@ -1,15 +1,5 @@
-﻿using Raven.Client;
-using Raven.Client.Embedded;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Mvc;
+﻿using System.Web.Http;
+using Raven.Client.Documents.Session;
 
 namespace Reflix.Controllers
 {

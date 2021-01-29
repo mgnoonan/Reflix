@@ -1,14 +1,10 @@
-﻿using Raven.Client.Document;
-using Raven.Client.Embedded;
-using Raven.Client.Indexes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Raven.Client.Documents;
+using Raven.Embedded;
 
 namespace Reflix
 {
@@ -17,7 +13,7 @@ namespace Reflix
 
     public class MvcApplication : System.Web.HttpApplication
     {
-        public static EmbeddableDocumentStore _store;
+        public static IDocumentStore _store;
 
         protected void Application_Start()
         {
@@ -33,9 +29,11 @@ namespace Reflix
 
         private static bool InitializeRavenDB(string dataDirectory, bool rethrowException)
         {
+            EmbeddedServer.Instance.StartServer();
+
             try
             {
-                _store = new EmbeddableDocumentStore { DataDirectory = dataDirectory };
+                _store = EmbeddedServer.Instance.GetDocumentStore("Embedded");
                 _store.Initialize();
                 return true;
             }

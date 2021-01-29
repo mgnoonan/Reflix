@@ -101,7 +101,7 @@ namespace Reflix.Worker
                 var client = new RestClient(API_URL);
                 var request = new RestRequest("Title", Method.POST);
                 request.RequestFormat = DataFormat.Json;
-                request.AddBody(title);
+                request.AddJsonBody(title);
 
                 try
                 {
