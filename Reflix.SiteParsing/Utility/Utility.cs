@@ -1,12 +1,10 @@
-using HtmlAgilityPack;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
+using HtmlAgilityPack;
 
 namespace Reflix.SiteParsing.Utility
 {
@@ -63,17 +61,19 @@ namespace Reflix.SiteParsing.Utility
                 HtmlDocument doc = hw.Load(url);
 
                 // Sanitize the markup and reload back to the HtmlDocument
-                var sanitizedMarkup = MarkupSanitizer.Sanitizer.SanitizeMarkup(doc.DocumentNode.InnerHtml);
-                doc.LoadHtml(sanitizedMarkup.MarkupText);
+                //var sanitizedMarkup = MarkupSanitizer.Sanitizer.SanitizeMarkup(doc.DocumentNode.InnerHtml);
+                var sanitizedMarkup = doc.DocumentNode.InnerHtml;
+                //doc.LoadHtml(sanitizedMarkup.MarkupText);
+                doc.LoadHtml(sanitizedMarkup);
 
                 // Grab all the paragraph tags and just append the innnerText
                 var paragraphTags = doc.DocumentNode.SelectNodes("//p");
-                foreach(var paragraph in paragraphTags)
+                foreach (var paragraph in paragraphTags)
                 {
                     string innerText = System.Web.HttpUtility.HtmlDecode(paragraph.InnerText).Trim();
                     innerText = RemoveWhitespaceWithSplit(innerText).Trim();
                     if (!string.IsNullOrWhiteSpace(innerText) && CharCount(innerText, ";{}=|") < 3 && CharCount(innerText, ' ') >= 5)
-                    {                        
+                    {
                         description += "<p>" + innerText + "</p>" + Environment.NewLine;
                     }
                 }
