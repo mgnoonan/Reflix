@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30914.41
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Worker", "Reflix.Worker\Reflix.Worker.csproj", "{CC36482C-91D1-4515-B3A7-85E7CE5EB356}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflix.Worker", "Reflix.Worker\Reflix.Worker.csproj", "{CC36482C-91D1-4515-B3A7-85E7CE5EB356}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Models", "Reflix.Models\Reflix.Models.csproj", "{391C8C93-0B06-43CC-9DDD-8927772957D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflix.Models", "Reflix.Models\Reflix.Models.csproj", "{391C8C93-0B06-43CC-9DDD-8927772957D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.SiteParsing", "Reflix.SiteParsing\Reflix.SiteParsing.csproj", "{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflix.SiteParsing", "Reflix.SiteParsing\Reflix.SiteParsing.csproj", "{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflix.Mvc", "Reflix.Mvc\Reflix.Mvc.csproj", "{DBEEAA68-0C11-4417-B779-7D9DE8C2B93C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB22E0E9-9050-48DF-9C2B-40F87E8E17AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBEEAA68-0C11-4417-B779-7D9DE8C2B93C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBEEAA68-0C11-4417-B779-7D9DE8C2B93C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBEEAA68-0C11-4417-B779-7D9DE8C2B93C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBEEAA68-0C11-4417-B779-7D9DE8C2B93C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
